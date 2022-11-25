@@ -105,6 +105,7 @@ def simulate_generation(screen, robots, food_locations, water_locations, generat
         
         screen.fill(BACKGROUND_COLOR)
         draw_food(screen, food_rects)
+        draw_water(screen, water_locations)
         update_text(screen, generation, best_robot, len(robots))
         for i in range(len(current_robot_rects)):
              pygame.draw.rect(screen, robot_colors[i], current_robot_rects[i])
@@ -145,14 +146,32 @@ def update_text(screen, generation, best_robot_last_gen, numberOfAgents):
     screen.blit(text, text_rect)
 
 
+
+def create_food(water_locations):
+    food = []
+    for x in range(10, WORLD_WIDTH-10, SCALE_FACTOR):
+        for y in range(10, WORLD_HEIGHT-10, SCALE_FACTOR):
+            food_pos = (x,y)
+            for w in water_locations:
+                if inside_water(w.bottom_left, w.top_right, food_pos):
+                    continue
+                else:
+                    food.append(Food(x,y))
+    return food
+
     
-    
+def inside_water(bl, tr, p):
+    if (p[0] > bl[0] and p[0] < tr[0] and p[1] > bl[1] and p[1] < tr[1]) :
+      return True
+    else :
+      return False
 
 
 if __name__ == "__main__":
     screen = setup_screen()
-    food_locations = [Food(x,y) for x in range(10, WORLD_WIDTH-10, SCALE_FACTOR) for y in range(10, WORLD_HEIGHT-10, SCALE_FACTOR) ]
     water_locations = [Water() for x in range(10)]
+    food_locations = create_food(water_locations)
+    
     current_gen = create_initial_pop(20)
     best_robot_in_last_gen = current_gen[0]
     best_robot = current_gen[0]
@@ -172,14 +191,5 @@ if __name__ == "__main__":
         #     best_robot = best_robot_in_generation
         current_gen = create_next_generation(current_gen_sorted)
     
-
-
-
-
-    # next_population = create_next_generation(best_robots)
-    # best_robot_in_next_population = simulate_population(screen, next_population, food_locations)
-    # simulate_one_robot(screen, best_robot_in_next_population, food_locations)
-    # best = find_best_robot(best_robots)
-    # simulate_one_robot(screen, best, food_locations)
     s = 1
     pygame.quit()

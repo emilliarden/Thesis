@@ -14,27 +14,14 @@ class Robot:
     def __init__(self, moves=[]):
         self.x = start_position[0]
         self.y = start_position[1]
+        self.q = 0
         self.size = SCALE_FACTOR
         self.foodGathered = 0
         self.color = (random.randint(1,255), random.randint(1,255), random.randint(1,255))
         self.nn = NeuralNetwork()
-        # self.fitness = -1000
-        # self.moves = []
-        # self.coordinates = []
-        # self.createMoves()
 
-    def sense(self, food, robots):
+    def sense(self, food,robots):
         output_arr = []
-        # for x in range(int(self.x-SCALE_FACTOR), int(self.x+SCALE_FACTOR)+1, SCALE_FACTOR):
-        #     for y in range(int(self.y-SCALE_FACTOR), int(self.y+SCALE_FACTOR)+1, SCALE_FACTOR):
-        #         rect = pygame.rect.Rect(x,y,self.size,self.size)
-        #         if (rect.collidelist(food) > 0):
-        #             output_arr.append(1)
-        #         elif(rect.collidelist([pygame.Rect(r.x, r.y, r.size, r.size) for r in robots])):
-        #             output_arr.append(-1)
-        #         else:
-        #             output_arr.append(0)
-        # output_arr.pop(5)
 
         current_rect = pygame.Rect(self.x,self.y, self.size, self.size)
         rect_list = [pygame.Rect(self.x -10, self.y, self.size, self.size), pygame.Rect(self.x +10, self.y, self.size, self.size), pygame.Rect(self.x, self.y + 10, self.size, self.size), pygame.Rect(self.x, self.y - 10, self.size, self.size)]
@@ -116,7 +103,7 @@ class Food2:
 class Water:
     def __init__(self):
         self.top_left = (random.randint(0,800), random.randint(0,800))
-        self.top_right = (random.randint(self.top_left[0], self.top_left[0]+100), random.randint(self.top_left[1]-10, self.top_left[1]+10))
-        self.bottom_left = (random.randint(self.top_left[0]-10, self.top_left[0]+10), random.randint(self.top_left[1], self.top_left[1]+100))
-        self.bottom_right = (random.randint(self.top_right[0]-10, self.top_right[0]+10), random.randint(self.top_right[1], self.top_right[1]+100))
+        self.top_right = (random.randint(self.top_left[0], self.top_left[0]+100), self.top_left[1])
+        self.bottom_left = (self.top_left[0], random.randint(self.top_left[1], self.top_left[1]+100))
+        self.bottom_right = (self.top_right[0], self.bottom_left[1])
         self.points = [self.top_left, self.bottom_left, self.bottom_right, self.top_right]
