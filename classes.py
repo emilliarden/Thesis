@@ -46,7 +46,7 @@ class Robot:
         if self.q == 90:
             loop_x_end = world_width
         if self.q == 270:
-            loop_x_end == 0
+            loop_x_end = 0
 
         loop_y_end = self.y 
         if self.q == 0:
@@ -63,7 +63,7 @@ class Robot:
 
         for x in range(x_loop_start, x_loop_end+1, 10):
             for y in range(y_loop_start, y_loop_end+1, 10):
-                rect = pygame.Rect(self.x, self.y, 1, 1)
+                rect = pygame.Rect(x, y, self.size, self.size)
                 if rect.collidelist(food_rects) > -1:
                     amount_of_food_in_direction_q += 1
                 elif rect.collidelist(water_rects) > -1:
@@ -73,8 +73,8 @@ class Robot:
                 else:
                     amount_of_nothing_in_direction_q += 1
 
-        total_squares_in_direction_q = amount_of_food_in_direction_q + amount_of_robots_in_direction_q + amount_of_water_in_direction_q 
-        return [amount_of_food_in_direction_q, amount_of_robots_in_direction_q, amount_of_water_in_direction_q, timestep/800]
+        total_squares_in_direction_q = amount_of_food_in_direction_q + amount_of_robots_in_direction_q + amount_of_water_in_direction_q + amount_of_nothing_in_direction_q
+        return [amount_of_food_in_direction_q/total_squares_in_direction_q, amount_of_robots_in_direction_q/total_squares_in_direction_q, amount_of_water_in_direction_q/total_squares_in_direction_q, timestep/800]
 
         
 

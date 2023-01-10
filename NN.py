@@ -8,7 +8,7 @@ class NeuralNetwork:
     def __init__(self):
         self.input_layer = [Neuron() for _ in range(5)]
         self.hidden_layer = [Neuron() for _ in range(12)]
-        self.hidden_layer2 = [Neuron() for _ in range(6)]
+        # self.hidden_layer2 = [Neuron() for _ in range(6)]
         self.output_layer = [Neuron() for _ in range(3)]
     
     def get_output(self, input):
@@ -22,14 +22,14 @@ class NeuralNetwork:
             out = neuron.get_output_wos(input_outputs)
             hidden_outputs.append(out)
 
-        hidden_outputs2 = []
-        for neuron in self.hidden_layer2:
-            out = neuron.get_output_wos(hidden_outputs)
-            hidden_outputs2.append(out)
+        # hidden_outputs2 = []
+        # for neuron in self.hidden_layer2:
+        #     out = neuron.get_output_wos(hidden_outputs)
+        #     hidden_outputs2.append(out)
 
         output = []
         for neuron in self.output_layer:
-            out = neuron.get_output(hidden_outputs2)
+            out = neuron.get_output(hidden_outputs)
             output.append(out)
 
         max_value = max(output)

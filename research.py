@@ -1,3 +1,4 @@
+import sys 
 import pygame
 import time
 import random
@@ -9,9 +10,9 @@ from numpy.random import randint
 
 SCALE_FACTOR = 10
 
-WORLD_HEIGHT = 800
-WORLD_WIDTH = 800
-WATER_COLOR =       (0,0,255)
+WORLD_HEIGHT =          800
+WORLD_WIDTH =           800
+WATER_COLOR =       (0,30,255)
 FOOD_COLOR =        (0,255,0)
 BACKGROUND_COLOR =  (0,0,0)
 pygame.init()
