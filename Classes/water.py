@@ -1,6 +1,6 @@
 from numpy import random
 import pygame
-from Classes.Constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
+from Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
 
 
 class Water:

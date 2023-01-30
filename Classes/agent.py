@@ -1,12 +1,14 @@
+import copy
+
 import pygame
 from numpy import random
-from Classes import NeuralNetwork
-from Constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
+from Classes.neural_network import NeuralNetwork
+from Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR
 
 possible_directions = [(SCALE_FACTOR, 0), (-SCALE_FACTOR, 0), (0, SCALE_FACTOR), (0, -SCALE_FACTOR)]
 start_position = (WORLD_WIDTH/2, WORLD_HEIGHT/2)
 
-class Robot:
+class Agent:
     def __init__(self):
         self.x = start_position[0]
         self.y = start_position[1]
@@ -29,13 +31,13 @@ class Robot:
         else:
             return (self.rect.midleft, (self.rect.midleft[0]-5, self.rect.midleft[1]))
 
-    def sense(self, food_rects, water_rects, robots, timestep):        
+    def sense(self, food, water, population, timestep):
         amount_of_food_in_direction_q = 0
         amount_of_robots_in_direction_q = 0
         amount_of_water_in_direction_q = 0
         amount_of_nothing_in_direction_q = 0
 
-        robot_rects = [pygame.Rect(r.x, r.y, r.size, r.size) for r in robots]
+        agent_rects = [pygame.Rect(r.x, r.y, r.size, r.size) for r in population]
 
         loop_x_end = self.x
         if self.q == 90:
@@ -60,13 +62,13 @@ class Robot:
         for x in range(x_loop_start, x_loop_end+1, 10):
             for y in range(y_loop_start, y_loop_end+1, 10):
                 rect = pygame.Rect(x, y, self.size, self.size)
-                if rect.collidelist(food_rects) > -1:
+                if rect.collidelist(food) > -1:
                     amount_of_food_in_direction_q += 1
-                elif rect.collidelist(water_rects) > -1:
+                elif rect.collidelist(water) > -1:
                     if first:
                         set_water_to_max = True
                     amount_of_water_in_direction_q += 1
-                elif rect.collidelist(robot_rects) > -1:
+                elif rect.collidelist(agent_rects) > -1:
                     amount_of_robots_in_direction_q += 1
                 else:
                     amount_of_nothing_in_direction_q += 1
@@ -74,7 +76,7 @@ class Robot:
 
         total_squares_in_direction_q = amount_of_food_in_direction_q + amount_of_robots_in_direction_q + amount_of_water_in_direction_q + amount_of_nothing_in_direction_q
         amount_of_water_in_direction_q = total_squares_in_direction_q if set_water_to_max else amount_of_water_in_direction_q
-        return [amount_of_food_in_direction_q/total_squares_in_direction_q, amount_of_robots_in_direction_q/total_squares_in_direction_q, amount_of_water_in_direction_q/total_squares_in_direction_q, timestep/800]
+        return [amount_of_food_in_direction_q/total_squares_in_direction_q, amount_of_robots_in_direction_q/total_squares_in_direction_q, amount_of_water_in_direction_q/total_squares_in_direction_q]
 
         
 
@@ -98,16 +100,16 @@ class Robot:
                 self.y = self.y + 10
             if self.q == 270:
                 self.x = self.x - 10
-        self.rect = pygame.rect(self.x, self.y, self.size, self.size)
+        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
 
     def get_robot_rect_from_move(self, action):
-        x,y,q = self.x, self.y, self.q
+        x, y, q = self.x, self.y, self.q
         
         if action == 2:
             if self.q == 270:
                 q = 0
             else:
-                q= self.q + 90 
+                q = self.q + 90
         if action == 1:
             if self.q == 0:
                 q = 270
@@ -117,13 +119,13 @@ class Robot:
             if self.q == 0:
                 y = self.y - 10
             if self.q == 90:
-                x= self.x + 10
+                x = self.x + 10
             if self.q == 180:
                 y = self.y + 10
             if self.q == 270:
                 x = self.x - 10
 
-        return pygame.Rect(x,y, self.size, self.size)
+        return pygame.Rect(x, y, self.size, self.size)
        
     def reset_robot(self):
         self.x = WORLD_WIDTH/2
@@ -136,7 +138,14 @@ class Robot:
         nn_layers[random_index].bias = random.uniform(-1,1)
         nn_layers[random_index].weight = random.uniform(-4,4)
 
-        self.color =  (random.randint(1,255), random.randint(1,255), random.randint(1,255))
+        self.color = (random.randint(1,255), random.randint(1,255), random.randint(1,255))
 
 
-
+    def create_offspring(self):
+        new_agent = copy.deepcopy(self)
+        new_agent.mutate()
+        new_agent.x = random.randint(0, WORLD_WIDTH)
+        new_agent.y = random.randint(0, WORLD_HEIGHT)
+        new_agent.rect = pygame.Rect(new_agent.x, new_agent.y, SCALE_FACTOR, SCALE_FACTOR)
+        new_agent.energy = 100
+        return new_agent

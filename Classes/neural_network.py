@@ -6,7 +6,7 @@ no_input_neurons = 8
 
 class NeuralNetwork:
     def __init__(self):
-        self.input_layer = [Neuron() for _ in range(5)]
+        self.input_layer = [Neuron() for _ in range(3)]
         self.hidden_layer = [Neuron() for _ in range(12)]
         # self.hidden_layer2 = [Neuron() for _ in range(6)]
         self.output_layer = [Neuron() for _ in range(3)]

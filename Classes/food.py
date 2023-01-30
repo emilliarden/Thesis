@@ -1,13 +1,13 @@
 from numpy import random
 import pygame
-from Constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
+from Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
 
 
 class Food:
     def __init__(self, x, y, energy):
         self.x = x
         self.y = y
-        self.size = SCALE_FACTOR
+        self.size = SCALE_FACTOR if energy < 40 else SCALE_FACTOR*2
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
         self.energy = energy
 
