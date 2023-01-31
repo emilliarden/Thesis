@@ -1,12 +1,13 @@
 import copy
-
 import pygame
-from numpy import random
+from numpy import random, sin, cos
 from Classes.neural_network import NeuralNetwork
 from Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR
 
 possible_directions = [(SCALE_FACTOR, 0), (-SCALE_FACTOR, 0), (0, SCALE_FACTOR), (0, -SCALE_FACTOR)]
 start_position = (WORLD_WIDTH/2, WORLD_HEIGHT/2)
+robot_timestep = 0.1        # 1/robot_timestep equals update frequency of robot
+simulation_timestep = 0.01
 
 class Agent:
     def __init__(self):
@@ -15,11 +16,15 @@ class Agent:
         self.q = 0
         self.size = SCALE_FACTOR
         self.age = 0
-        self.energy = 100
+        self.energy = 200
         self.color = (random.randint(1, 255), random.randint(1, 255), random.randint(1, 255))
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
         self.nn = NeuralNetwork()
         self.out_of_bounds = False
+        self.radius_of_wheels = 20
+        self.distance_between_wheels = 100
+        self.left_wheel_velocity = 0
+        self.right_wheel_velocity = 0
 
     def get_direction_line(self):
         if self.q == 0:
@@ -76,9 +81,41 @@ class Agent:
 
         total_squares_in_direction_q = amount_of_food_in_direction_q + amount_of_robots_in_direction_q + amount_of_water_in_direction_q + amount_of_nothing_in_direction_q
         amount_of_water_in_direction_q = total_squares_in_direction_q if set_water_to_max else amount_of_water_in_direction_q
-        return [amount_of_food_in_direction_q/total_squares_in_direction_q, amount_of_robots_in_direction_q/total_squares_in_direction_q, amount_of_water_in_direction_q/total_squares_in_direction_q]
+        return [self.x/WORLD_WIDTH, self.y/WORLD_HEIGHT, self.age, amount_of_food_in_direction_q/total_squares_in_direction_q, amount_of_robots_in_direction_q/total_squares_in_direction_q, amount_of_water_in_direction_q/total_squares_in_direction_q]
 
-        
+    def simulation_step(self):
+        for step in range(int(robot_timestep / simulation_timestep)):  # step model time/timestep times
+            v_x = cos(self.q) * (self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
+            v_y = sin(self.q) * (self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
+            omega = (self.radius_of_wheels * self.right_wheel_velocity - self.radius_of_wheels * self.left_wheel_velocity) / (2 * self.distance_between_wheels)
+
+            self.x += v_x * simulation_timestep
+            self.y += v_y * simulation_timestep
+            self.q += omega * simulation_timestep
+
+    def simulation_step_rect(self):
+        x = self.x
+        y = self.y
+        q = self.q
+
+        for step in range(int(robot_timestep / simulation_timestep)):  # step model time/timestep times
+            v_x = cos(self.q) * (self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
+            v_y = sin(self.q) * (self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
+            omega = (self.radius_of_wheels * self.right_wheel_velocity - self.radius_of_wheels * self.left_wheel_velocity) / (2 * self.distance_between_wheels)
+
+            x += v_x * simulation_timestep
+            y += v_y * simulation_timestep
+            q += omega * simulation_timestep
+
+        return pygame.Rect(x, y, self.size, self.size)
+
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, self.size, self.size)
+
+    def set_motor_speeds(self, nn_output):
+        self.left_wheel_velocity = nn_output[0]
+        self.right_wheel_velocity = nn_output[1]
+
 
     def move_robot(self, action):
         if action == 2:

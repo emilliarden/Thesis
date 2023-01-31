@@ -68,11 +68,11 @@ def create_initial_pop(population_size):
 def adjust_food_environment(timestep, food_rects, population):
     food_to_add = []
     min_food = 2000 if len(population) < 50 else 3000
-    if timestep % 25 == 0:
-            food_to_add.append(Food(random.randint(0, WORLD_WIDTH/5), random.randint(0, WORLD_HEIGHT/5), 40))
-            food_to_add.append(Food(random.randint(WORLD_WIDTH*0.8, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT/5), 40))
-            food_to_add.append(Food(random.randint(WORLD_WIDTH*0.8, WORLD_WIDTH), random.randint(WORLD_HEIGHT*0.8, WORLD_HEIGHT), 40))
-            food_to_add.append(Food(random.randint(0, WORLD_WIDTH/5), random.randint(WORLD_HEIGHT*0.8, WORLD_HEIGHT), 40))
+    if timestep % 250 == 0:
+        food_to_add.append(Food(random.randint(0, WORLD_WIDTH/5), random.randint(0, WORLD_HEIGHT/5), 40))
+        food_to_add.append(Food(random.randint(WORLD_WIDTH*0.8, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT/5), 40))
+        food_to_add.append(Food(random.randint(WORLD_WIDTH*0.8, WORLD_WIDTH), random.randint(WORLD_HEIGHT*0.8, WORLD_HEIGHT), 40))
+        food_to_add.append(Food(random.randint(0, WORLD_WIDTH/5), random.randint(WORLD_HEIGHT*0.8, WORLD_HEIGHT), 40))
 
     if len(food_rects) < min_food:
         diff = min_food - len(food_rects)
@@ -94,7 +94,6 @@ def simulate(screen, population, food, water):
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-
         if len(population) == 0:
             population = create_initial_pop(20)
             food = Food.create_food(water_rects)
@@ -109,54 +108,61 @@ def simulate(screen, population, food, water):
         #SIMULATION
         for agent in population:
             #CHECK IF REPRODUCE
-            if agent.energy >= 1500 and len(population) < 80:
+            if agent.energy >= 1000 and len(population) < 80:
                 population.append(agent.create_offspring())
-                agent.energy -= 1000
+                agent.energy -= 500
 
-            agent_current_rect = agent.rect
+            agent_current_rect = agent.get_rect()
             other_robots = list(population)
             other_robots.remove(agent)
             input_to_nn = agent.sense(food_rects, water, other_robots, timestep)
             nn_output = agent.nn.get_output(input_to_nn)
-            agent_next_rect = agent.get_robot_rect_from_move(nn_output)
-            other_robots_rects = [agent.rect for agent in other_robots]
 
-            agent.energy -= 1
-            if agent.energy < 1:
-                population.remove(agent)
-                continue
+            #TEST
+            agent.set_motor_speeds(nn_output)
+            #agent.simulation_step()
+            agent_next_rect = agent.simulation_step_rect()
+            #agent_next_rect = agent.get_robot_rect_from_move(nn_output)
+            other_robots_rects = [agent.get_rect() for agent in other_robots]
+
+
 
 
             if pygame.Rect.collidelist(agent_next_rect, other_robots_rects) == -1:
-                agent_current_rect = agent_next_rect
-                agent.move_robot(nn_output)
+                agent.simulation_step()
+                agent_current_rect = agent.get_rect()
+                #agent.move_robot(nn_output)
 
-            collidesWithFoodAtPosition = pygame.Rect.collidelist(agent_current_rect, food_rects)
-            while collidesWithFoodAtPosition > -1:
-                agent.energy += food[collidesWithFoodAtPosition].energy
-                food_rects.pop(collidesWithFoodAtPosition)
-                food.pop(collidesWithFoodAtPosition)
-                collidesWithFoodAtPosition = pygame.Rect.collidelist(agent_current_rect, food_rects)
+            collides_with_food_at_position = pygame.Rect.collidelist(agent_current_rect, food_rects)
+            while collides_with_food_at_position > -1:
+                agent.energy += food[collides_with_food_at_position].energy
+                food_rects.pop(collides_with_food_at_position)
+                food.pop(collides_with_food_at_position)
+                collides_with_food_at_position = pygame.Rect.collidelist(agent_current_rect, food_rects)
 
             if agent_current_rect.collidelist(water_rects) > -1 or agent_current_rect.centerx > WORLD_WIDTH or agent_current_rect.centerx < 0 or agent_current_rect.centery > WORLD_HEIGHT or agent_current_rect.centery < 0:
                 agent.out_of_bounds = True
                 population.remove(agent)
                 continue
 
+            agent.energy -= 1
+            agent.age += 1
+            if agent.energy < 1:
+                population.remove(agent)
+                continue
+
         screen.fill(BACKGROUND_COLOR)
         draw_food(screen, food)
         draw_water(screen, water_rects)
-        rank_of_robots = sorted(population, key=lambda x: x.energy, reverse=True)
-        best_robot = rank_of_robots[0] if len(rank_of_robots) > 0 else Agent()
+        rank_of_robots = sorted(population, key=lambda x: x.age, reverse=True)
+        oldest_robot = rank_of_robots[0] if len(rank_of_robots) > 0 else Agent()
         for i in range(len(population)):
-            pygame.draw.rect(screen, population[i].color, population[i].rect)
-            pygame.draw.line(screen, population[i].color, population[i].get_direction_line()[0], population[i].get_direction_line()[1], 5)
-        update_text(screen, timestep, best_robot, len(population), len(food_rects))
+            pygame.draw.rect(screen, population[i].color, population[i].get_rect())
+            #pygame.draw.line(screen, population[i].color, population[i].get_direction_line()[0], population[i].get_direction_line()[1], 5)
+        update_text(screen, timestep, oldest_robot, len(population), len(food_rects))
         timestep += 1
         pygame.display.update()
 
-
-    
 
 
 def draw_food(screen, food):
@@ -170,13 +176,13 @@ def draw_water(screen, water):
     for w in water:
         pygame.draw.rect(screen, WATER_COLOR, w)
 
-def update_text(screen, timestep, best_robot, numberOfAgents, amountOffood):
+def update_text(screen, timestep, oldest_robot, numberOfAgents, amountOffood):
     text = font.render("Timestep: " + str(timestep), True, TEXT_COLOR )
     text_rect = text.get_rect()
     text_rect.bottomleft = 0, 20
     screen.blit(text, text_rect)
 
-    text = font.render("Current best robot: " + str(best_robot.energy), True, TEXT_COLOR)
+    text = font.render("Age of oldest robot: " + str(oldest_robot.age), True, TEXT_COLOR)
     text_rect = text.get_rect()
     text_rect.bottomleft = 0, 40
     screen.blit(text, text_rect)
@@ -191,7 +197,7 @@ def update_text(screen, timestep, best_robot, numberOfAgents, amountOffood):
     text_rect.bottomleft = 0, 80
     screen.blit(text, text_rect)
 
-    pygame.draw.rect(screen, (255, 0, 0), (best_robot.rect.topleft[0]-7.5, best_robot.rect.topleft[1]-7.5, SCALE_FACTOR+15, SCALE_FACTOR+15), 2, border_radius=1)
+    pygame.draw.rect(screen, (255, 0, 0), (oldest_robot.get_rect().topleft[0]-7.5, oldest_robot.get_rect().topleft[1]-7.5, SCALE_FACTOR+15, SCALE_FACTOR+15), 2, border_radius=1)
 
 
 

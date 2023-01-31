@@ -6,10 +6,10 @@ no_input_neurons = 8
 
 class NeuralNetwork:
     def __init__(self):
-        self.input_layer = [Neuron() for _ in range(3)]
+        self.input_layer = [Neuron() for _ in range(6)]
         self.hidden_layer = [Neuron() for _ in range(12)]
         # self.hidden_layer2 = [Neuron() for _ in range(6)]
-        self.output_layer = [Neuron() for _ in range(3)]
+        self.output_layer = [Neuron() for _ in range(2)]
     
     def get_output(self, input):
         input_outputs = []
@@ -32,8 +32,8 @@ class NeuralNetwork:
             out = neuron.get_output(hidden_outputs)
             output.append(out)
 
-        max_value = max(output)
-        max_index = output.index(max_value)
+        #max_value = max(output)
+        #max_index = output.index(max_value)
 
         # moves = [(0,-10), (10,0), (0,10), (-10,0)]
         # return moves[round(normalised_sum * 3)]
@@ -42,7 +42,7 @@ class NeuralNetwork:
         # #2 = down // (0,10)
         # #3 = left // (-10,0)
 
-        return max_index
+        return output
 
        
     def __sigmoid(self, x):
