@@ -1,6 +1,6 @@
 import copy
 import pygame
-from numpy import random, sin, cos
+from numpy import random, sin, cos, pi, array, linalg
 from Classes.neural_network import NeuralNetwork
 from Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR
 
@@ -8,6 +8,7 @@ possible_directions = [(SCALE_FACTOR, 0), (-SCALE_FACTOR, 0), (0, SCALE_FACTOR),
 start_position = (WORLD_WIDTH/2, WORLD_HEIGHT/2)
 robot_timestep = 0.1        # 1/robot_timestep equals update frequency of robot
 simulation_timestep = 0.01
+INITIAL_ENERGY = 500
 
 class Agent:
     def __init__(self):
@@ -16,72 +17,78 @@ class Agent:
         self.q = 0
         self.size = SCALE_FACTOR
         self.age = 0
-        self.energy = 200
+        self.energy = INITIAL_ENERGY
         self.color = (random.randint(1, 255), random.randint(1, 255), random.randint(1, 255))
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
         self.nn = NeuralNetwork()
         self.out_of_bounds = False
-        self.radius_of_wheels = 20
-        self.distance_between_wheels = 100
+        self.radius_of_wheels = 60
+        self.distance_between_wheels = 80
         self.left_wheel_velocity = 0
         self.right_wheel_velocity = 0
+        self.sensing_distance = 250
+        self.sensing_rect = None
 
-    def get_direction_line(self):
-        if self.q == 0:
-            return (self.rect.midtop, (self.rect.midtop[0], self.rect.midtop[1] -5))
-        elif self.q == 90:
-            return (self.rect.midright, (self.rect.midright[0]+5, self.rect.midright[1]) )
-        elif self.q == 180:
-            return (self.rect.midbottom, (self.rect.midbottom[0], self.rect.midbottom[1] + 5))
-        else:
-            return (self.rect.midleft, (self.rect.midleft[0]-5, self.rect.midleft[1]))
+    def get_sensing_points(self):
+        direction_of_agent = self.q
+        angle = 20*pi/180
+        angle_12 = 90*pi/180
+        angle1 = direction_of_agent - (angle)
+        angle2 = direction_of_agent + (angle)
+        angle3 = direction_of_agent + angle_12
+        angle4 = direction_of_agent - angle_12
+        point1_x = self.x + self.sensing_distance * cos(angle1)
+        point1_y = self.y + self.sensing_distance * sin(angle1)
 
-    def sense(self, food, water, population, timestep):
-        amount_of_food_in_direction_q = 0
-        amount_of_robots_in_direction_q = 0
-        amount_of_water_in_direction_q = 0
-        amount_of_nothing_in_direction_q = 0
+        point2_x = self.x + self.sensing_distance * cos(angle2)
+        point2_y = self.y + self.sensing_distance * sin(angle2)
 
-        agent_rects = [pygame.Rect(r.x, r.y, r.size, r.size) for r in population]
+        point3_x = self.x + 5 * cos(angle3)
+        point3_y = self.y + 5 * sin(angle3)
 
-        loop_x_end = self.x
-        if self.q == 90:
-            loop_x_end = WORLD_WIDTH
-        if self.q == 270:
-            loop_x_end = 0
+        point4_x = self.x + 5 * cos(angle4)
+        point4_y = self.y + 5 * sin(angle4)
 
-        loop_y_end = self.y 
-        if self.q == 0:
-            loop_y_end = 0  
-        if self.q == 180:
-            loop_y_end = WORLD_HEIGHT
 
-        y_loop_start = int(min([self.y, loop_y_end]))
-        y_loop_end = int(max([self.y, loop_y_end]))
-        x_loop_start = int(min([self.x, loop_x_end]))
-        x_loop_end = int(max([self.x, loop_x_end]))
 
-        first = True
-        set_water_to_max = False
+        return [(point1_x, point1_y), (point2_x, point2_y), (point3_x, point3_y), (point4_x, point4_y)]
 
-        for x in range(x_loop_start, x_loop_end+1, 10):
-            for y in range(y_loop_start, y_loop_end+1, 10):
-                rect = pygame.Rect(x, y, self.size, self.size)
-                if rect.collidelist(food) > -1:
-                    amount_of_food_in_direction_q += 1
-                elif rect.collidelist(water) > -1:
-                    if first:
-                        set_water_to_max = True
-                    amount_of_water_in_direction_q += 1
-                elif rect.collidelist(agent_rects) > -1:
-                    amount_of_robots_in_direction_q += 1
-                else:
-                    amount_of_nothing_in_direction_q += 1
-                first = False
+    def sense(self, food, water, population, quad_tree):
 
-        total_squares_in_direction_q = amount_of_food_in_direction_q + amount_of_robots_in_direction_q + amount_of_water_in_direction_q + amount_of_nothing_in_direction_q
-        amount_of_water_in_direction_q = total_squares_in_direction_q if set_water_to_max else amount_of_water_in_direction_q
-        return [self.x/WORLD_WIDTH, self.y/WORLD_HEIGHT, self.age, amount_of_food_in_direction_q/total_squares_in_direction_q, amount_of_robots_in_direction_q/total_squares_in_direction_q, amount_of_water_in_direction_q/total_squares_in_direction_q]
+        sensing_rect = self.get_sensing_points()
+        closest_food = 100
+
+        minX = min([x[0] for x in sensing_rect])
+        minY = min([x[1] for x in sensing_rect])
+        maxX = max([x[0] for x in sensing_rect])
+        maxY = max([x[1] for x in sensing_rect])
+
+        #TEST
+        sensing_r_test = pygame.Rect(minX, minY, maxX-minX, maxY-minY)
+        #sensing_r_test.bottomleft = (minX, minY)
+        #sensing_r_test.topright = (maxX, maxY)
+        self.sensing_rect = sensing_r_test
+        #####
+
+        sensed_food = quad_tree.range_search([(minX, maxY), (maxX, minY)])
+        amount_of_food_in_sensing_area = len(sensed_food)
+
+
+        amount_of_water_in_sensing_triangle = 0
+        closest_water = 100
+        # for w in water:
+        #     if self.pisinTri(w.center):
+        #         amount_of_water_in_sensing_triangle += 1
+
+        amount_of_agents_in_sensing_triangle = 0
+        closest_agent = 100
+        # for a in population:
+        #     if self.pisinTri(a.get_rect().center):
+        #         amount_of_agents_in_sensing_triangle += 1
+
+        return [amount_of_food_in_sensing_area, closest_food, amount_of_water_in_sensing_triangle, closest_water,
+                amount_of_agents_in_sensing_triangle, closest_agent, self.age]
+
 
     def simulation_step(self):
         for step in range(int(robot_timestep / simulation_timestep)):  # step model time/timestep times
@@ -110,59 +117,14 @@ class Agent:
         return pygame.Rect(x, y, self.size, self.size)
 
     def get_rect(self):
-        return pygame.Rect(self.x, self.y, self.size, self.size)
+        rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        rect.center = (self.x, self.y)
+        return rect
 
     def set_motor_speeds(self, nn_output):
         self.left_wheel_velocity = nn_output[0]
         self.right_wheel_velocity = nn_output[1]
 
-
-    def move_robot(self, action):
-        if action == 2:
-            if self.q == 270:
-                self.q = 0
-            else:
-                self.q += 90 
-        if action == 1:
-            if self.q == 0:
-                self.q = 270
-            else:
-                self.q -= 90
-        if action == 0:
-            if self.q == 0:
-                self.y = self.y - 10
-            if self.q == 90:
-                self.x = self.x + 10
-            if self.q == 180:
-                self.y = self.y + 10
-            if self.q == 270:
-                self.x = self.x - 10
-        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-
-    def get_robot_rect_from_move(self, action):
-        x, y, q = self.x, self.y, self.q
-        
-        if action == 2:
-            if self.q == 270:
-                q = 0
-            else:
-                q = self.q + 90
-        if action == 1:
-            if self.q == 0:
-                q = 270
-            else:
-                q = self.q - 90
-        if action == 0:
-            if self.q == 0:
-                y = self.y - 10
-            if self.q == 90:
-                x = self.x + 10
-            if self.q == 180:
-                y = self.y + 10
-            if self.q == 270:
-                x = self.x - 10
-
-        return pygame.Rect(x, y, self.size, self.size)
        
     def reset_robot(self):
         self.x = WORLD_WIDTH/2
@@ -184,5 +146,6 @@ class Agent:
         new_agent.x = random.randint(0, WORLD_WIDTH)
         new_agent.y = random.randint(0, WORLD_HEIGHT)
         new_agent.rect = pygame.Rect(new_agent.x, new_agent.y, SCALE_FACTOR, SCALE_FACTOR)
-        new_agent.energy = 100
+        new_agent.energy = INITIAL_ENERGY
+        new_agent.age = 0
         return new_agent
