@@ -10,6 +10,9 @@ class Water:
             rect = self.generate_water_rect()
         self.rect = rect
 
+    def get_rect(self):
+        return self.rect
+
     def generate_water_rect(self):
         randomcenter_x = random.randint(0, WORLD_WIDTH)
         randomcenter_y = random.randint(0, WORLD_HEIGHT)
