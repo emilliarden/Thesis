@@ -8,10 +8,11 @@ from Classes.neural_network import NeuralNetwork
 from Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR
 from Classes.geometry_functions import line_intersection, intersect, angle_between, point_inside_polygon
 
-start_position = (WORLD_WIDTH/2, WORLD_HEIGHT/2)
-robot_timestep = 0.1        # 1/robot_timestep equals update frequency of robot
+start_position = (WORLD_WIDTH / 2, WORLD_HEIGHT / 2)
+robot_timestep = 0.1  # 1/robot_timestep equals update frequency of robot
 simulation_timestep = 0.01
 INITIAL_ENERGY = 0
+
 
 class Agent:
     def __init__(self):
@@ -23,7 +24,8 @@ class Agent:
         self.energy = INITIAL_ENERGY
         self.color = (np.random.randint(1, 255), np.random.randint(1, 255), np.random.randint(1, 255))
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-        self.nn = NeuralNetwork()
+        self.nn = None
+        self.genome = None
         self.out_of_bounds = False
         self.radius_of_wheels = 60
         self.distance_between_wheels = 80
@@ -37,8 +39,8 @@ class Agent:
 
     def get_sensing_points(self):
         direction_of_agent = self.q
-        angle = 20*np.pi/180
-        angle_12 = 90*np.pi/180
+        angle = 20 * np.pi / 180
+        angle_12 = 90 * np.pi / 180
         angle1 = direction_of_agent - (angle)
         angle2 = direction_of_agent + (angle)
         angle3 = direction_of_agent + angle_12
@@ -62,31 +64,33 @@ class Agent:
 
         sensing_rect = self.get_sensing_points()
 
-        #FOOD-------------------------------
+        # FOOD-------------------------------
         minX = min([x[0] for x in sensing_rect])
         minY = min([x[1] for x in sensing_rect])
         maxX = max([x[0] for x in sensing_rect])
         maxY = max([x[1] for x in sensing_rect])
 
-        self.sensing_rect = pygame.Rect(minX, minY, maxX-minX, maxY-minY)
+        self.sensing_rect = pygame.Rect(minX, minY, maxX - minX, maxY - minY)
 
         sensed_food = quad_tree.range_search([(minX, minY), (maxX, maxY)])
         sensed_food = list(filter(lambda p: point_inside_polygon(p[0], p[1], sensing_rect), sensed_food))
         amount_of_food_in_sensing_area = len(sensed_food)
-        closest_food_and_distance = self.closest_food_and_distance((self.x, self.y), sensed_food) if amount_of_food_in_sensing_area > 0 else None
+        closest_food_and_distance = self.closest_food_and_distance((self.x, self.y),
+                                                                   sensed_food) if amount_of_food_in_sensing_area > 0 else None
         closest_food_distance = 0
-        #TODO: Think about what the angle should be when no food is detected
+        # TODO: Think about what the angle should be when no food is detected
         angle_to_food = 0
 
         if closest_food_and_distance != None:
             closest_food = closest_food_and_distance[0]
             closest_food_distance = closest_food_and_distance[1]
-            #Angle to food:
+            # Angle to food:
             direction_vector = [math.cos(self.q), math.sin(self.q)]
-            food_vector = [max(self.x, closest_food[0])-min(self.x, closest_food[0]), max(self.y, closest_food[1])-min(self.y, closest_food[1])]
+            food_vector = [max(self.x, closest_food[0]) - min(self.x, closest_food[0]),
+                           max(self.y, closest_food[1]) - min(self.y, closest_food[1])]
             angle_to_food = angle_between(direction_vector, food_vector)
-        #--------------------------------
-        #EDGEDETECTION-------------------
+        # --------------------------------
+        # EDGEDETECTION-------------------
         detect_edge = 0
         distance_to_edge = 0
         if (sensing_rect[0][0] < 0 or sensing_rect[1][0] < 0
@@ -97,7 +101,7 @@ class Agent:
             if distance_to_edge < 250:
                 detect_edge = 1
 
-        #WATER----------------------------
+        # WATER----------------------------
         # amount_of_water_in_sensing_triangle = 0
         # closest_water = 100
         # for w in water:
@@ -124,19 +128,20 @@ class Agent:
         #     print("COLOR: " + str(self.color))
         #     print("Amount of agents in sensing area: " + str(amount_of_agents_in_sensing_area))
 
-        #-------------------------------
-        return [amount_of_food_in_sensing_area/len(food),
-                (self.sensing_distance - closest_food_distance)/self.sensing_distance,
-                angle_to_food, detect_edge, distance_to_edge, self.age/(sum(x.age for x in population)+1),
-                amount_of_agents_in_sensing_area/len(population), (self.sensing_distance - distance_to_closest_agent)/self.sensing_distance,
+        # -------------------------------
+        return [amount_of_food_in_sensing_area / len(food),
+                (self.sensing_distance - closest_food_distance) / self.sensing_distance,
+                angle_to_food, distance_to_edge, self.age / (sum(x.age for x in population) + 1),
+                amount_of_agents_in_sensing_area / len(population),
+                (self.sensing_distance - distance_to_closest_agent) / self.sensing_distance,
                 angle_to_closest_agent]
 
     def get_distance_to_edge(self, sensing_rect):
         sensing_line = [sensing_rect[1], sensing_rect[0]]
         border_lines = [((0, 0), (WORLD_WIDTH, 0)),
-                       ((0, 0), (0, WORLD_HEIGHT)),
-                       ((0, WORLD_HEIGHT), (WORLD_WIDTH, WORLD_HEIGHT)),
-                       ((WORLD_WIDTH, WORLD_HEIGHT), (WORLD_WIDTH, 0))]
+                        ((0, 0), (0, WORLD_HEIGHT)),
+                        ((0, WORLD_HEIGHT), (WORLD_WIDTH, WORLD_HEIGHT)),
+                        ((WORLD_WIDTH, WORLD_HEIGHT), (WORLD_WIDTH, 0))]
 
         direction_of_agent = self.q
         point1_x = self.x + WORLD_WIDTH * np.cos(direction_of_agent)
@@ -147,7 +152,7 @@ class Agent:
         for line in border_lines:
             intersection_point = intersect(sensing_line[0], sensing_line[1], line[0], line[1])
             if intersection_point != None:
-                #intersection_point = line_intersection(sensing_line, line)
+                # intersection_point = line_intersection(sensing_line, line)
                 distance = math.dist(self.get_center_coord(), intersection_point)
                 if distance < distance_to_return:
                     distance_to_return = distance
@@ -158,9 +163,6 @@ class Agent:
 
         return distance_to_return
 
-
-
-
     def closest_food_and_distance(self, pt, pts):
         closest_food = pts[cdist([pt], pts).argmin()]
         return (closest_food, math.dist(closest_food, (self.x, self.y)))
@@ -168,12 +170,15 @@ class Agent:
     def sign(self, p1, p2, p3):
         return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])
 
-
     def simulation_step(self):
         for step in range(int(robot_timestep / simulation_timestep)):  # step model time/timestep times
-            v_x = np.cos(self.q) * (self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
-            v_y = np.sin(self.q) * (self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
-            omega = (self.radius_of_wheels * self.right_wheel_velocity - self.radius_of_wheels * self.left_wheel_velocity) / (2 * self.distance_between_wheels)
+            v_x = np.cos(self.q) * (
+                        self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
+            v_y = np.sin(self.q) * (
+                        self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
+            omega = (
+                                self.radius_of_wheels * self.right_wheel_velocity - self.radius_of_wheels * self.left_wheel_velocity) / (
+                                2 * self.distance_between_wheels)
 
             self.x += v_x * simulation_timestep
             self.y += v_y * simulation_timestep
@@ -185,9 +190,13 @@ class Agent:
         q = self.q
 
         for step in range(int(robot_timestep / simulation_timestep)):  # step model time/timestep times
-            v_x = np.cos(self.q) * (self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
-            v_y = np.sin(self.q) * (self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
-            omega = (self.radius_of_wheels * self.right_wheel_velocity - self.radius_of_wheels * self.left_wheel_velocity) / (2 * self.distance_between_wheels)
+            v_x = np.cos(self.q) * (
+                        self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
+            v_y = np.sin(self.q) * (
+                        self.radius_of_wheels * self.left_wheel_velocity / 2 + self.radius_of_wheels * self.right_wheel_velocity / 2)
+            omega = (
+                                self.radius_of_wheels * self.right_wheel_velocity - self.radius_of_wheels * self.left_wheel_velocity) / (
+                                2 * self.distance_between_wheels)
 
             x += v_x * simulation_timestep
             y += v_y * simulation_timestep
@@ -204,20 +213,18 @@ class Agent:
         self.left_wheel_velocity = nn_output[0]
         self.right_wheel_velocity = nn_output[1]
 
-       
     def reset_robot(self):
-        self.x = WORLD_WIDTH/2
-        self.y = WORLD_HEIGHT/2
+        self.x = WORLD_WIDTH / 2
+        self.y = WORLD_HEIGHT / 2
         self.q = 0
 
     def mutate(self):
-        nn_layers = self.nn.input_layer+self.nn.hidden_layer+self.nn.output_layer
-        random_index = np.random.randint(0, len(nn_layers)-1)
-        nn_layers[random_index].bias = np.random.uniform(-1,1)
-        nn_layers[random_index].weight = np.random.uniform(-4,4)
+        nn_layers = self.nn.input_layer + self.nn.hidden_layer + self.nn.output_layer
+        random_index = np.random.randint(0, len(nn_layers) - 1)
+        nn_layers[random_index].bias = np.random.uniform(-1, 1)
+        nn_layers[random_index].weight = np.random.uniform(-4, 4)
 
-        self.color = (np.random.randint(1,255), np.random.randint(1,255), np.random.randint(1,255))
-
+        self.color = (np.random.randint(1, 255), np.random.randint(1, 255), np.random.randint(1, 255))
 
     def create_offspring(self):
         new_agent = copy.deepcopy(self)
