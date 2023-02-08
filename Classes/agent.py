@@ -6,7 +6,7 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from Classes.neural_network import NeuralNetwork
 from Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR
-from Classes.geometry_functions import line_intersection, intersect, angle_between
+from Classes.geometry_functions import line_intersection, intersect, angle_between, point_inside_polygon
 
 start_position = (WORLD_WIDTH/2, WORLD_HEIGHT/2)
 robot_timestep = 0.1        # 1/robot_timestep equals update frequency of robot
@@ -62,7 +62,7 @@ class Agent:
 
         sensing_rect = self.get_sensing_points()
 
-        #FOOD
+        #FOOD-------------------------------
         minX = min([x[0] for x in sensing_rect])
         minY = min([x[1] for x in sensing_rect])
         maxX = max([x[0] for x in sensing_rect])
@@ -71,9 +71,11 @@ class Agent:
         self.sensing_rect = pygame.Rect(minX, minY, maxX-minX, maxY-minY)
 
         sensed_food = quad_tree.range_search([(minX, minY), (maxX, maxY)])
+        sensed_food = list(filter(lambda p: point_inside_polygon(p[0], p[1], sensing_rect), sensed_food))
         amount_of_food_in_sensing_area = len(sensed_food)
         closest_food_and_distance = self.closest_food_and_distance((self.x, self.y), sensed_food) if amount_of_food_in_sensing_area > 0 else None
         closest_food_distance = 0
+        #TODO: Think about what the angle should be when no food is detected
         angle_to_food = 0
 
         if closest_food_and_distance != None:
@@ -95,11 +97,6 @@ class Agent:
             if distance_to_edge < 250:
                 detect_edge = 1
 
-
-
-
-
-
         #WATER----------------------------
         # amount_of_water_in_sensing_triangle = 0
         # closest_water = 100
@@ -108,14 +105,31 @@ class Agent:
         #         amount_of_water_in_sensing_triangle += 1
         # #--------------------------------
         # #AGENTS---------------------------
-        # amount_of_agents_in_sensing_triangle = 0
-        # closest_agent = 100
-        # for a in population:
-        #     if self.pointInTriangle(a.get_rect().center, (self.x, self.y), sensing_rect[0], sensing_rect[1]):
-        #         amount_of_agents_in_sensing_triangle += 1
+        amount_of_agents_in_sensing_area = 0
+        distance_to_closest_agent = self.sensing_distance
+        # TODO: Think about what the angle should be when no agent is detected
+        angle_to_closest_agent = 0
+        for a in population:
+            if point_inside_polygon(a.x, a.y, sensing_rect):
+                amount_of_agents_in_sensing_area += 1
+                distance_to_agent = math.dist(self.get_center_coord(), a.get_center_coord())
+                if distance_to_agent < distance_to_closest_agent:
+                    distance_to_closest_agent = distance_to_agent
+                    direction_vector = [math.cos(self.q), math.sin(self.q)]
+                    agent_vector = [max(self.x, a.x) - min(self.x, a.x),
+                                    max(self.y, a.y) - min(self.y, a.y)]
+                    angle_to_closest_agent = angle_between(direction_vector, agent_vector)
+
+        # if (amount_of_agents_in_sensing_area > 0):
+        #     print("COLOR: " + str(self.color))
+        #     print("Amount of agents in sensing area: " + str(amount_of_agents_in_sensing_area))
 
         #-------------------------------
-        return [amount_of_food_in_sensing_area/len(food), (self.sensing_distance-closest_food_distance)/self.sensing_distance, angle_to_food, detect_edge, distance_to_edge, self.age/(sum(x.age for x in population)+1)]
+        return [amount_of_food_in_sensing_area/len(food),
+                (self.sensing_distance - closest_food_distance)/self.sensing_distance,
+                angle_to_food, detect_edge, distance_to_edge, self.age/(sum(x.age for x in population)+1),
+                amount_of_agents_in_sensing_area/len(population), (self.sensing_distance - distance_to_closest_agent)/self.sensing_distance,
+                angle_to_closest_agent]
 
     def get_distance_to_edge(self, sensing_rect):
         sensing_line = [sensing_rect[1], sensing_rect[0]]
@@ -129,7 +143,7 @@ class Agent:
         point1_y = self.y + WORLD_HEIGHT * np.sin(direction_of_agent)
         sensing_line = [self.get_center_coord(), (point1_x, point1_y)]
 
-        distance_to_return = 250
+        distance_to_return = self.sensing_distance
         for line in border_lines:
             intersection_point = intersect(sensing_line[0], sensing_line[1], line[0], line[1])
             if intersection_point != None:
@@ -142,7 +156,7 @@ class Agent:
                 # print("Intersection point: " + str(intersection_point))
                 # print("Distance between: " + str(distance))
 
-        return distance_to_return if distance_to_return < 250 else 0
+        return distance_to_return
 
 
 

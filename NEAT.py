@@ -102,30 +102,12 @@ def simulate(screen, population, food, water, quad_tree):
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-        if len(population) < INITIAL_POPULATION_SIZE:
-            for i in range(INITIAL_POPULATION_SIZE - len(population)):
-                population.append(oldest_robot.create_offspring())
-
-
-            # population = create_initial_pop(INITIAL_POPULATION_SIZE)
-            # food = Food.create_random_food(water_rects, INITIAL_AMOUNT_FOOD)
-            # food_rects = [f.rect for f in food]
-            # timestep = 0
-
         timestep += 1
-        # TO ENSURE FOOD IS AVAILABLE
-        extra_food = adjust_food_environment(timestep, food_rects, population)
-        food.extend(extra_food)
-        food_rects.extend([e_f.get_rect() for e_f in extra_food])
-        for f in extra_food:
-            quad_tree.add(f.get_rect().center)
 
         #SIMULATION
         for agent in population:
-            #CHECK IF REPRODUCE
-            if agent.age > 1000  and len(population) < 80:
-                population.append(agent.create_offspring())
-                agent.energy -= agent.energy/2
+            if agent.out_of_bounds:
+                continue
 
             agent_current_rect = agent.get_rect()
             other_robots = list(population)
@@ -141,7 +123,6 @@ def simulate(screen, population, food, water, quad_tree):
             if pygame.Rect.collidelist(agent_next_rect, other_robots_rects) == -1:
                 agent.simulation_step()
                 agent_current_rect = agent.get_rect()
-                #agent.move_robot(nn_output)
 
             collides_with_food_at_position = pygame.Rect.collidelist(agent_current_rect, food_rects)
             while collides_with_food_at_position > -1:
@@ -149,18 +130,10 @@ def simulate(screen, population, food, water, quad_tree):
                 quad_tree.remove(food_rects[collides_with_food_at_position].center)
                 food_rects.pop(collides_with_food_at_position)
                 food.pop(collides_with_food_at_position)
-
                 collides_with_food_at_position = pygame.Rect.collidelist(agent_current_rect, food_rects)
 
             if agent_current_rect.collidelist(water_rects) > -1 or agent_current_rect.centerx > WORLD_WIDTH or agent_current_rect.centerx < 0 or agent_current_rect.centery > WORLD_HEIGHT or agent_current_rect.centery < 0:
                 agent.out_of_bounds = True
-                population.remove(agent)
-                continue
-
-            agent.energy -= 1
-            agent.age += 1
-            if agent.energy < 0:
-                population.remove(agent)
                 continue
 
         rank_of_robots = sorted(population, key=lambda x: x.age, reverse=True)

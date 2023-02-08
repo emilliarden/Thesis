@@ -1,15 +1,15 @@
-from numpy import exp, array, random, dot
+from numpy import exp, array, random, dot, tanh
 from random import uniform
 import math
 
 class NeuralNetwork:
     def __init__(self):
-        self.input_layer = [Neuron() for _ in range(6)]
+        self.input_layer = [Neuron() for _ in range(9)]
         self.hidden_layer = [Neuron() for _ in range(14)]
         # self.hidden_layer2 = [Neuron() for _ in range(6)]
         self.output_layer = [Neuron() for _ in range(2)]
     
-    def get_output(self, input):
+    def get_output(self, input) -> list[int]:
         input_outputs = []
         for i in range(len(input)):
             out = self.input_layer[i].get_intermediate_output(input[i])
@@ -56,6 +56,7 @@ class Neuron:
         sum += self.bias 
 
         return self.__sigmoid(sum)
+        #return tanh(sum)
         
         
     def __sigmoid(self, x):
