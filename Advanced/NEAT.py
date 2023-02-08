@@ -1,15 +1,11 @@
-import copy
-import math
 import random
 import neat
-import os
 import pygame
 
-from Classes.water import Water
-from Classes.food import Food
-from Classes.neat_agent import Agent
-from Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
-from Classes.kd_tree import QuadTree
+from Advanced.Classes.food import Food
+from Advanced.Classes.neat_agent import Agent
+from Advanced.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
+from Advanced.Classes.kd_tree import QuadTree
 
 WATER_COLOR = (0, 157, 196)
 FOOD_COLOR = (34, 139, 34)
@@ -195,7 +191,7 @@ def run_neat(config):
 
 
 if __name__ == "__main__":
-    config_path = "/Users/emilknudsen/Desktop/research/NEAT/config.txt"
+    config_path = "/Advanced/NEAT/config.txt"
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet, neat.DefaultStagnation
                          , config_path)
 

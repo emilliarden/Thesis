@@ -4,9 +4,8 @@ import math
 import pygame
 import numpy as np
 from scipy.spatial.distance import cdist
-from Classes.neural_network import NeuralNetwork
-from Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR
-from Classes.geometry_functions import line_intersection, intersect, angle_between, point_inside_polygon
+from Advanced.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR
+from Advanced.Classes.geometry_functions import intersect, angle_between, point_inside_polygon
 
 start_position = (WORLD_WIDTH / 2, WORLD_HEIGHT / 2)
 robot_timestep = 0.1  # 1/robot_timestep equals update frequency of robot
