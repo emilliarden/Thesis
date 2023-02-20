@@ -1,6 +1,6 @@
 from numpy import random
 import pygame
-from Advanced.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
+from Simple.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
 
 
 class Food:
@@ -12,6 +12,8 @@ class Food:
 
     def get_rect(self):
         rect = pygame.Rect(self.x, self.y, SCALE_FACTOR, SCALE_FACTOR)
+        rect.centerx = self.x
+        rect.centery = self.y
         return rect
 
 

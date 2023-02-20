@@ -232,7 +232,7 @@ def run_neat(config):
     winner = p.run(eval_genomes, 50)
 
 if __name__ == "__main__":
-    config_path = "/Advanced/NEAT/config.txt"
+    config_path = "/Users/emilknudsen/Desktop/research/Advanced/NEAT/config.txt"
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet, neat.DefaultStagnation
                          , config_path)
 
