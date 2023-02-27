@@ -19,10 +19,19 @@ class Screen:
         for agent in population:
             if not agent.out_of_bounds:
                 pygame.draw.rect(self.screen, agent.color, agent.get_rect())
-                for coord in agent.sensing_rects:
+                for coord in agent.sensing_rects_before_move:
                     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                     rect.center = coord
-                    pygame.draw.rect(self.screen, (0, 0, 165), rect, 2)
+                    pygame.draw.rect(self.screen, (0, 0, 100), rect, 2)
+                # for coord in agent.sensing_rects_after_move:
+                #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
+                #     rect.center = coord
+                #     pygame.draw.rect(self.screen, (100, 0, 0), rect, 2)
+                for coord in agent.previous3_positions.queue:
+                    rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
+                    rect.center = coord
+                    pygame.draw.rect(self.screen, agent.color, rect)
+
         self.update_text(best_robot, timestep, population, food, generation)
         self.clock.tick()
         pygame.display.update()
@@ -40,7 +49,7 @@ class Screen:
             pygame.draw.rect(self.screen, WATER_COLOR, w)
 
     def update_text(self, best_robot, timestep, population, food, generation):
-        text = self.font.render("Timestep: " + str(timestep), True, TEXT_COLOR )
+        text = self.font.render("Timestep: " + str(timestep), True, TEXT_COLOR)
         text_rect = text.get_rect()
         text_rect.bottomleft = 0, 20
         self.screen.blit(text, text_rect)
@@ -60,12 +69,12 @@ class Screen:
         text_rect.bottomleft = 0, 80
         self.screen.blit(text, text_rect)
 
-        text = self.font.render("Generation: " + str(generation), True, (255, 255, 255))
+        text = self.font.render("Generation: " + str(generation), True, (TEXT_COLOR))
         text_rect = text.get_rect()
         text_rect.bottomleft = 0, 100
         self.screen.blit(text, text_rect)
 
-        text = self.font.render("FPS: " + str(self.clock.get_fps().__round__(1)), True, (255, 255, 255))
+        text = self.font.render("FPS: " + str(self.clock.get_fps().__round__(1)), True, (TEXT_COLOR))
         text_rect = text.get_rect()
         text_rect.bottomleft = WORLD_WIDTH-100, 20
         self.screen.blit(text, text_rect)

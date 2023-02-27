@@ -1,6 +1,6 @@
 from numpy import random
 import pygame
-from Simple.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH
+from Simple.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH, INITIAL_AMOUNT_FOOD
 
 
 class Food:
@@ -19,21 +19,17 @@ class Food:
 
     def create_food(water_rects):
         food_dict = dict()
-        for x in range(0, WORLD_WIDTH, SCALE_FACTOR):
-            for y in range(0, WORLD_HEIGHT, SCALE_FACTOR):
+        for x in range(0, WORLD_WIDTH+1, SCALE_FACTOR):
+            for y in range(0, WORLD_HEIGHT+1, SCALE_FACTOR):
                 if y == WORLD_HEIGHT/2:
                     continue
                 food_dict[(x, y)] = Food(x, y, 1)
         return food_dict
 
-    def create_random_food(water_rects, amountOfFood):
-        food = []
-        for _ in range(amountOfFood):
-            x = random.randint(0, WORLD_WIDTH)
-            y = random.randint(0, WORLD_HEIGHT)
-            food_rect = pygame.Rect(x, y, SCALE_FACTOR, SCALE_FACTOR)
-            if food_rect.collidelist(water_rects) > -1:
-                continue
-            else:
-                food.append(Food(x, y, 20))
-        return food
+    def create_random_food(water_rects):
+        food_dict = dict()
+        while len(food_dict) < INITIAL_AMOUNT_FOOD:
+            x = round(random.randint(0, WORLD_WIDTH) / SCALE_FACTOR) * SCALE_FACTOR
+            y = round(random.randint(0, WORLD_HEIGHT) / SCALE_FACTOR) * SCALE_FACTOR
+            food_dict[(x, y)] = Food(x, y, 1)
+        return food_dict

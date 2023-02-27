@@ -1,12 +1,7 @@
 import pygame
 import numpy as np
-from Simple.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR
-
-start_position = (WORLD_WIDTH / 2, WORLD_HEIGHT / 2)
-robot_timestep = 0.1  # 1/robot_timestep equals update frequency of robot
-simulation_timestep = 0.01
-INITIAL_ENERGY = 0
-SENSING_DISTANCE = 8
+import queue
+from Simple.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR, SENSING_DISTANCE
 
 
 class Agent:
@@ -15,11 +10,18 @@ class Agent:
         self.y = 0
         self.size = SCALE_FACTOR
         self.color = (np.random.randint(1, 255), np.random.randint(1, 255), np.random.randint(1, 255))
-        self.sensing_rects = []
+        self.sensing_distance = SENSING_DISTANCE
+        self.sensing_rects_before_move = []
+        self.sensing_rects_after_move = []
+        self.previous3_positions = queue.Queue(10)
         self.nn = None
         self.genome = None
         self.out_of_bounds = False
         self.previous_locations = [(self.x, self.y)]
+        self.sensed_food_nearest_square = False
+        self.sensed_food_second_square = False
+        self.amount_of_sensed_food = 0
+        self.best_move = False
 
     def get_center_coord(self):
         return self.x, self.y
@@ -29,8 +31,42 @@ class Agent:
         rect.center = (self.x, self.y)
         return rect
 
+    def get_best_move(self, simulation):
+        coords = [(self.x, self.y - SCALE_FACTOR), (self.x + SCALE_FACTOR, self.y),
+                  (self.x, self.y + SCALE_FACTOR), (self.x - SCALE_FACTOR, self.y),
+                  (self.x, self.y - SCALE_FACTOR * 2), (self.x + SCALE_FACTOR * 2, self.y),
+                  (self.x, self.y + SCALE_FACTOR * 2), (self.x - SCALE_FACTOR * 2, self.y),
+                  (self.x, self.y - SCALE_FACTOR * 3), (self.x + SCALE_FACTOR * 3, self.y),
+                  (self.x, self.y + SCALE_FACTOR * 3), (self.x - SCALE_FACTOR * 3, self.y)]
+
+        west = [coords[3], coords[7], coords[11]]
+        east = [coords[1], coords[5], coords[9]]
+        north = [coords[0], coords[4], coords[8]]
+        south = [coords[2], coords[6], coords[10]]
+
+        directions = [west, east, north, south]
+
+        best_direction_count = 0
+        best_direction_index = 0
+
+        for i, l in enumerate(directions):
+            count_of_food = 0
+            for coord in l:
+                if coord in simulation.food:
+                    count_of_food += 1
+            if count_of_food > best_direction_count:
+                best_direction_index = i
+
+        return best_direction_index
+
     def move(self, simulation):
-        sensed = self.sense(simulation)
+        if self.previous3_positions.full():
+            self.previous3_positions.get()
+
+        self.previous3_positions.put((self.x, self.y))
+
+
+        sensed = self.sense3(simulation)
         nn_output = self.nn.activate(sensed)
         nn_action = nn_output.index(max(nn_output))
 
@@ -43,91 +79,85 @@ class Agent:
         elif nn_action == 3:
             self.y += SCALE_FACTOR
 
+        # self.best_move = nn_action == best_move
+
+        coords = []
+        for i in range(1, SENSING_DISTANCE + 1):
+            coords.append((self.x, self.y - SCALE_FACTOR * i))
+            coords.append((self.x + SCALE_FACTOR * i, self.y))
+            coords.append((self.x, self.y + SCALE_FACTOR * i))
+            coords.append((self.x - SCALE_FACTOR * i, self.y))
+
+        self.sensing_rects_after_move = coords
+
         return self.x, self.y
 
-    def sense(self, simulation):
-        amount_of_food_north = 0
-        amount_of_food_east = 0
-        amount_of_food_south = 0
-        amount_of_food_west = 0
-        distance_to_edge_north = SENSING_DISTANCE
-        distance_to_edge_east = SENSING_DISTANCE
-        distance_to_edge_south = SENSING_DISTANCE
-        distance_to_edge_west = SENSING_DISTANCE
-        distance_to_robot_north = SENSING_DISTANCE
-        distance_to_robot_east = SENSING_DISTANCE
-        distance_to_robot_south = SENSING_DISTANCE
-        distance_to_robot_west = SENSING_DISTANCE
+    def sense2(self, simulation):
+        output = []
+        robot_coords = []
 
+        # list(filter(lambda a: a.out_of_bounds is False, simulation.population))
+        # robot_coords = set([a.get_center_coord() for a in robots])
 
-        # amount_of_robots_north = 0
-        # amount_of_robots_east = 0
-        # amount_of_robots_south = 0
-        # amount_of_robots_west = 0
+        coords = []
+        for i in range(1, SENSING_DISTANCE + 1):
+            coords.append((self.x, self.y - SCALE_FACTOR * i))
+            coords.append((self.x + SCALE_FACTOR * i, self.y))
+            coords.append((self.x, self.y + SCALE_FACTOR * i))
+            coords.append((self.x - SCALE_FACTOR * i, self.y))
 
-        robot_coords = set([a.get_center_coord() for a in simulation.population])
-        self.sensing_rects = []
-        #NORTH
-        for i in range(SENSING_DISTANCE+1):
-            coord = self.x, self.y-i*SCALE_FACTOR
-            self.sensing_rects.append(coord)
+        self.sensing_rects_before_move = coords
+
+        for i, coord in enumerate(coords):
             if coord in simulation.food:
-                amount_of_food_north += 1
-            elif coord[1] < 0 and distance_to_edge_north == SENSING_DISTANCE:
-                distance_to_edge_north = i-1
-            elif coord in robot_coords and distance_to_robot_north == SENSING_DISTANCE:
-                distance_to_robot_north = i-1
-                #amount_of_robots_north += 1
+                output.append(1)
+            elif coord in robot_coords or coord[0] < 0 or coord[0] > WORLD_WIDTH or coord[1] < 0 or coord[1] > WORLD_HEIGHT:
+                output.append(0)
+            else:
+                output.append(0.5)
 
-        #EAST
-        for i in range(SENSING_DISTANCE+1):
-            coord = self.x + i*SCALE_FACTOR, self.y
-            self.sensing_rects.append(coord)
+        # output.append(self.x/WORLD_WIDTH)
+        # output.append(self.y/WORLD_HEIGHT)
+
+        if 1 in output[:4]:
+            self.sensed_food_nearest_square = True
+        else:
+            self.sensed_food_nearest_square = False
+
+        return output
+
+    def sense3(self, simulation):
+        output = []
+
+        coords = []
+        for i in range(1, SENSING_DISTANCE + 1):
+            coords.append((self.x, self.y - SCALE_FACTOR * i))
+            coords.append((self.x + SCALE_FACTOR * i, self.y))
+            coords.append((self.x, self.y + SCALE_FACTOR * i))
+            coords.append((self.x - SCALE_FACTOR * i, self.y))
+
+        self.sensing_rects_before_move = coords
+
+        for coord in coords:
             if coord in simulation.food:
-                amount_of_food_east += 1
-            elif coord[0] > WORLD_WIDTH and distance_to_edge_east == SENSING_DISTANCE:
-                distance_to_edge_east = i-1
-            elif coord in robot_coords and distance_to_robot_east:
-                distance_to_robot_east = i-1
-                #amount_of_robots_east += 1
+                output.append(1)
+            else:
+                output.append(0)
 
-        #SOUTH
-        for i in range(SENSING_DISTANCE+1):
-            coord = self.x, self.y + i *SCALE_FACTOR
-            self.sensing_rects.append(coord)
-            if coord in simulation.food:
-                amount_of_food_south += 1
-            elif coord[1] > WORLD_HEIGHT and distance_to_edge_south == SENSING_DISTANCE:
-                distance_to_edge_south = i-1
-            elif coord in robot_coords and distance_to_robot_south == SENSING_DISTANCE:
-                distance_to_robot_south = i-1
-                #amount_of_robots_south += 1
+            if coord[0] < 0 or coord[0] > WORLD_WIDTH or coord[1] < 0 or coord[1] > WORLD_HEIGHT:
+                output.append(1)
+            else:
+                output.append(0)
 
+        if 1 in output[:4]:
+            self.sensed_food_nearest_square = True
+        else:
+            self.sensed_food_nearest_square = False
 
-        #WEST
-        for i in range(SENSING_DISTANCE+1):
-            coord = self.x - i*SCALE_FACTOR, self.y
-            self.sensing_rects.append(coord)
-            if coord in simulation.food:
-                amount_of_food_west += 1
-            elif coord[0] < 0 and distance_to_edge_west == SENSING_DISTANCE:
-                distance_to_edge_west = i-1
-            elif coord in robot_coords and distance_to_robot_west == SENSING_DISTANCE:
-                distance_to_robot_west = i-1
-                #amount_of_robots_west += 1
-
-
-        return [amount_of_food_north/SENSING_DISTANCE, amount_of_food_east/SENSING_DISTANCE, amount_of_food_south/SENSING_DISTANCE, amount_of_food_west/SENSING_DISTANCE,
-                distance_to_edge_north/SENSING_DISTANCE, distance_to_edge_east/SENSING_DISTANCE, distance_to_edge_south/SENSING_DISTANCE, distance_to_edge_west/SENSING_DISTANCE,
-                distance_to_robot_north/SENSING_DISTANCE, distance_to_robot_east/SENSING_DISTANCE, distance_to_robot_south/SENSING_DISTANCE, distance_to_robot_west/SENSING_DISTANCE
-                #amount_of_robots_north, amount_of_robots_east, amount_of_robots_south, amount_of_robots_west
-                ]
-
-
+        return output
 
     def simulation_step(self, simulation) -> bool:
         pass
 
     def simulation_step_rect(self):
         pass
-
