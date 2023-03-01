@@ -27,7 +27,7 @@ class Screen:
                 #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                 #     rect.center = coord
                 #     pygame.draw.rect(self.screen, (100, 0, 0), rect, 2)
-                for coord in agent.previous3_positions.queue:
+                for coord in agent.previous_positions.queue:
                     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                     rect.center = coord
                     pygame.draw.rect(self.screen, agent.color, rect)
@@ -74,9 +74,16 @@ class Screen:
         text_rect.bottomleft = 0, 100
         self.screen.blit(text, text_rect)
 
+        text = self.font.render("Current position: " + str((best_robot.x, best_robot.y)), True, (TEXT_COLOR))
+        text_rect = text.get_rect()
+        text_rect.bottomleft = 0, 120
+        self.screen.blit(text, text_rect)
+
         text = self.font.render("FPS: " + str(self.clock.get_fps().__round__(1)), True, (TEXT_COLOR))
         text_rect = text.get_rect()
         text_rect.bottomleft = WORLD_WIDTH-100, 20
         self.screen.blit(text, text_rect)
+
+
 
         pygame.draw.rect(self.screen, (255, 0, 0), (best_robot.get_rect().topleft[0]-7.5, best_robot.get_rect().topleft[1]-7.5, SCALE_FACTOR+15, SCALE_FACTOR+15), 2, border_radius=1)

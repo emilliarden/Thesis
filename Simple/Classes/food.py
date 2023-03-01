@@ -33,3 +33,32 @@ class Food:
             y = round(random.randint(0, WORLD_HEIGHT) / SCALE_FACTOR) * SCALE_FACTOR
             food_dict[(x, y)] = Food(x, y, 1)
         return food_dict
+
+    def create_food_in_random_corner(water_rects):
+        food_dict = dict()
+        corner1 = random.random()
+        corner2 = random.random()
+        x_from = WORLD_WIDTH/2 if corner1 < 0.5 else 0
+        x_to = WORLD_WIDTH if x_from == WORLD_WIDTH/2 else WORLD_WIDTH/2
+        y_from = WORLD_HEIGHT/2 if corner2 < 0.5 else 0
+        y_to = WORLD_HEIGHT if y_from == WORLD_WIDTH/2 else WORLD_HEIGHT/2
+        for x in range(int(x_from), int(x_to+1), SCALE_FACTOR):
+            for y in range(int(y_from), int(y_to+1), SCALE_FACTOR):
+                food_dict[(x, y)] = Food(x, y, 1)
+        return food_dict
+
+
+
+    def create_food_following_sinus(water_rects):
+        import numpy as np
+        food_dict = dict()
+        # Compute the x and y coordinates for points on a sine curve
+        x_coords = np.arange(0, 3 * np.pi, 0.2)
+        y_coords = np.sin(x_coords)
+        for x in x_coords:
+            for y in y_coords:
+                food_dict[(x, y)] = Food(x, y, 1)
+
+        return food_dict
+
+
