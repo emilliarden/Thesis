@@ -1,30 +1,27 @@
 import pygame
+import neat
 import numpy as np
 import queue
-from Simple.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR, SENSING_DISTANCE
+from Simple.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, SCALE_FACTOR, SENSING_DISTANCE, START_POSITION
 
 
 class Agent:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
+    def __init__(self, genome, config):
+        self.x = START_POSITION[0]
+        self.y = START_POSITION[1]
         self.size = SCALE_FACTOR
         self.color = (200, 8, 8)
         self.sensing_distance = SENSING_DISTANCE
         self.sensing_rects_before_move = []
         self.sensing_rects_after_move = []
         self.previous_positions = queue.Queue(10)
-        self.nn = None
-        self.genome = None
+        self.genome = genome
+        self.nn = neat.nn.recurrent.RecurrentNetwork.create(genome, config)
         self.out_of_bounds = False
-        self.previous_locations = [(self.x, self.y)]
-        self.sensed_food_nearest_square = False
-        self.sensed_food_second_square = False
         self.amount_of_sensed_food = 0
         self.best_move = False
         self.timesteps_without_progress = 0
         self.timesteps_alive = 0
-        self.visited_coords = set()
 
     def get_center_coord(self):
         return self.x, self.y
@@ -80,8 +77,6 @@ class Agent:
         elif nn_action == 3:
             self.y += SCALE_FACTOR
 
-        # self.best_move = nn_action == best_move
-
         # coords = []
         # for i in range(1, SENSING_DISTANCE + 1):
         #     coords.append((self.x, self.y - SCALE_FACTOR * i))
@@ -90,11 +85,6 @@ class Agent:
         #     coords.append((self.x - SCALE_FACTOR * i, self.y))
         #
         # self.sensing_rects_after_move = coords
-        if (self.x, self.y) in self.visited_coords:
-            self.timesteps_without_progress += 1
-        else:
-            self.timesteps_without_progress = 0
-            self.visited_coords.add((self.x, self.y))
 
         return self.x, self.y
 
@@ -105,30 +95,22 @@ class Agent:
         # list(filter(lambda a: a.out_of_bounds is False, simulation.population))
         # robot_coords = set([a.get_center_coord() for a in robots])
 
-        coords = []
-        for i in range(1, SENSING_DISTANCE + 1):
-            coords.append((self.x, self.y - SCALE_FACTOR * i))
-            coords.append((self.x + SCALE_FACTOR * i, self.y))
-            coords.append((self.x, self.y + SCALE_FACTOR * i))
-            coords.append((self.x - SCALE_FACTOR * i, self.y))
+        coords = set()
+        for i in range(-SENSING_DISTANCE, SENSING_DISTANCE + 1):
+            for j in range(-SENSING_DISTANCE, SENSING_DISTANCE + 1):
+                coords.add((self.x + SCALE_FACTOR * i, self.y + SCALE_FACTOR * j))
+
+        coords.remove((self.x, self.y))
 
         self.sensing_rects_before_move = coords
 
-        for i, coord in enumerate(coords):
+        for coord in coords:
             if coord in simulation.food:
                 output.append(1)
-            elif coord in robot_coords or coord[0] < 0 or coord[0] > WORLD_WIDTH or coord[1] < 0 or coord[1] > WORLD_HEIGHT:
+            elif coord[0] < 0 or coord[0] > WORLD_WIDTH or coord[1] < 0 or coord[1] > WORLD_HEIGHT:
                 output.append(0)
             else:
                 output.append(0.5)
-
-        # output.append(self.x/WORLD_WIDTH)
-        # output.append(self.y/WORLD_HEIGHT)
-
-        if 1 in output[:4]:
-            self.sensed_food_nearest_square = True
-        else:
-            self.sensed_food_nearest_square = False
 
         return output
 
@@ -155,10 +137,8 @@ class Agent:
             else:
                 output.append(0)
 
-        if 1 in output[:4]:
-            self.sensed_food_nearest_square = True
-        else:
-            self.sensed_food_nearest_square = False
+        #output.append(self.x/WORLD_WIDTH)
+        #output.append(self.y/WORLD_HEIGHT)
 
         return output
 
@@ -205,11 +185,8 @@ class Agent:
             else:
                 output.append(0)
 
-        nearest_squares = self.get_4_nearest_squares()
-        self.sensed_food_nearest_square = False
-        for coord in nearest_squares:
-            if coord in simulation.food:
-                self.sensed_food_nearest_square = True
+        output.append(self.x / WORLD_WIDTH)
+        output.append(self.y / WORLD_HEIGHT)
 
         return output
 

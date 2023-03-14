@@ -1,6 +1,7 @@
 from numpy import random
 import pygame
-from Simple.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH, INITIAL_AMOUNT_FOOD
+from Simple.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH, INITIAL_AMOUNT_FOOD, START_POSITION,\
+    FoodDistribution
 
 
 class Food:
@@ -19,9 +20,9 @@ class Food:
 
     def create_food(water_rects):
         food_dict = dict()
-        for x in range(0, WORLD_WIDTH+1, SCALE_FACTOR):
-            for y in range(0, WORLD_HEIGHT+1, SCALE_FACTOR):
-                if y == WORLD_HEIGHT/2:
+        for x in range(0, WORLD_WIDTH, SCALE_FACTOR):
+            for y in range(0, WORLD_HEIGHT, SCALE_FACTOR):
+                if (x, y) == START_POSITION:
                     continue
                 food_dict[(x, y)] = Food(x, y, 1)
         return food_dict
@@ -49,16 +50,31 @@ class Food:
 
 
 
-    def create_food_following_sinus(water_rects):
-        import numpy as np
+    def create_food_in_circle(water_rects):
+        import random
+        import math
         food_dict = dict()
-        # Compute the x and y coordinates for points on a sine curve
-        x_coords = np.arange(0, 3 * np.pi, 0.2)
-        y_coords = np.sin(x_coords)
-        for x in x_coords:
-            for y in y_coords:
-                food_dict[(x, y)] = Food(x, y, 1)
+        circle_x = WORLD_WIDTH/2
+        circle_y = WORLD_HEIGHT/2
+        while len(food_dict) < 1:
+            a = random.randint(0, 300) * 2 * math.pi
+            r = 1 * math.sqrt(random.randint(0, 300))
+            x = round((r * math.cos(a) + circle_x)/SCALE_FACTOR)*SCALE_FACTOR
+            y = round((r * math.sin(a) + circle_y)/SCALE_FACTOR)*SCALE_FACTOR
+            food_dict[(x, y)] = Food(x, y, 1)
 
         return food_dict
 
+    def get_food_from_food_distribution(food_distribution):
+        if food_distribution == FoodDistribution.Full:
+            return Food.create_food([])
+
+        elif food_distribution == FoodDistribution.Random:
+            return Food.create_random_food([])
+
+        elif food_distribution == FoodDistribution.Corner:
+            return Food.create_food_in_random_corner([])
+
+        elif food_distribution == FoodDistribution.Circle:
+            return Food.create_food_in_circle([])
 

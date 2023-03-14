@@ -27,10 +27,10 @@ class Screen:
                 #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                 #     rect.center = coord
                 #     pygame.draw.rect(self.screen, (100, 0, 0), rect, 2)
-                for coord in agent.previous_positions.queue:
-                    rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
-                    rect.center = coord
-                    pygame.draw.rect(self.screen, agent.color, rect)
+                # for coord in agent.previous_positions.queue:
+                #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
+                #     rect.center = coord
+                #     pygame.draw.rect(self.screen, agent.color, rect)
 
         self.update_text(best_robot, timestep, population, food, generation)
         self.clock.tick()
