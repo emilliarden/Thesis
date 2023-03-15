@@ -6,7 +6,7 @@ from copy import deepcopy
 
 
 def create_population(config, food, file_prefix):
-    print(f"Load the last best network!")
+    print(f"Load the last best factor network!")
     p = neat.Population(config, initial_state=(0, 0, 0))
     population = create_pop(config, file_prefix)
     species = config.species_set_type(config.species_set_config, p.reporters)
@@ -20,7 +20,7 @@ def create_population(config, food, file_prefix):
 
 
 def create_pop(config, file_prefix):
-    with open("/Users/emilknudsen/Desktop/research/Simple/Statistics_SenseBox_SensingRange4_ArenaFull/winner3.pkl", "rb") as f:
+    with open(file_prefix + "winner.pkl", "rb") as f:
         genome = pickle.load(f)
 
     genome_indexer = count(1)

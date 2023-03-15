@@ -1,5 +1,5 @@
 import pygame
-from Simple.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, BACKGROUND_COLOR, SCALE_FACTOR, FOOD_COLOR, WATER_COLOR, TEXT_COLOR
+from Simple_threaded.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, BACKGROUND_COLOR, SCALE_FACTOR, FOOD_COLOR, WATER_COLOR, TEXT_COLOR
 
 
 class Screen:
@@ -18,12 +18,11 @@ class Screen:
         self.draw_food(food)
         for agent in population:
             if not agent.out_of_bounds:
+                pygame.draw.rect(self.screen, agent.color, agent.get_rect())
                 for coord in agent.sensing_rects_before_move:
                     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                     rect.center = coord
                     pygame.draw.rect(self.screen, (0, 0, 100), rect, 2)
-
-                pygame.draw.rect(self.screen, agent.color, agent.get_rect())
                 # for coord in agent.sensing_rects_after_move:
                 #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                 #     rect.center = coord
@@ -55,7 +54,7 @@ class Screen:
         text_rect.bottomleft = 0, 20
         self.screen.blit(text, text_rect)
 
-        text = self.font.render("Energy for best robot: " + str(best_robot.genome.fitness.__round__(1)), True, TEXT_COLOR)
+        text = self.font.render("Energy for best robot: " + str(best_robot.genome.fitness), True, TEXT_COLOR)
         text_rect = text.get_rect()
         text_rect.bottomleft = 0, 40
         self.screen.blit(text, text_rect)
@@ -84,5 +83,7 @@ class Screen:
         text_rect = text.get_rect()
         text_rect.bottomleft = WORLD_WIDTH-100, 20
         self.screen.blit(text, text_rect)
+
+
 
         pygame.draw.rect(self.screen, (255, 0, 0), (best_robot.get_rect().topleft[0]-7.5, best_robot.get_rect().topleft[1]-7.5, SCALE_FACTOR+15, SCALE_FACTOR+15), 2, border_radius=1)

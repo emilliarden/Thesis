@@ -2,12 +2,14 @@ import copy
 import neat
 import pygame
 import pickle
+from configparser import ConfigParser
 
 from population_creator import create_population
 from Simple.Classes.food import Food
 from Simple.Classes.screen import Screen
 from Simple.Classes.agent import Agent
-from Simple.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, FoodDistribution, WORLD_SQUARES, StartMode
+from Simple.Classes.constants import WORLD_HEIGHT, WORLD_WIDTH, FoodDistribution, WORLD_SQUARES, StartMode, SensingMode, \
+    get_number_of_inputs
 
 
 class Simulation:
@@ -34,17 +36,10 @@ class Simulation:
 
         genomes = sorted(genomes, key=lambda x: x[1].fitness, reverse=True)
         for i, (genome_id, genome) in enumerate(genomes):
-            agent = Agent(genome, config)
+            agent = Agent(genome, config, sensing_mode)
             agent.genome.fitness = 0 if genome.fitness is None or new_gen else genome.fitness
             agents.append(agent)
         return agents
-
-    def create_winner_agent_from_genome(self, genome):
-        agent = Agent(genome, config)
-        agent.genome = genome
-        agent.genome.fitness = 0
-        agent.nn = neat.nn.recurrent.RecurrentNetwork.create(genome, config)
-        return [agent]
 
     def reset_gen(self):
         self.timestep = 0
@@ -71,6 +66,10 @@ class Simulation:
 
                 # MOVE AGENT
                 new_pos = agent.move(self)
+                # if new_pos not in agent.visited_squares:
+                #     agent.genome.fitness += 0.1
+                #
+                # agent.visited_squares.add(new_pos)
 
                 # CHECK IF MOVE GATHERS FOOD
                 if new_pos in self.food:
@@ -88,7 +87,6 @@ class Simulation:
                 if draw and i == 0:
                     self.screen.update_display(agent, self.timestep, self.food, [agent],
                                                self.neat_population.generation)
-                    x = 42
 
                 # INCREMENT TIMESTEPS
                 self.timestep += 1
@@ -105,9 +103,9 @@ class Simulation:
         elif run == StartMode.Winner:
             self.neat_population = create_population(self.config, food, 'test-')
         else:
-            self.neat_population = neat.Checkpointer.restore_checkpoint('test-1867')
+            self.neat_population = neat.Checkpointer.restore_checkpoint('test-729')
+            self.neat_population.config.fitness_threshold = fitness_threshold
 
-        self.neat_population.config.fitness_threshold = fitness_threshold
         self.neat_population.add_reporter(neat.StdOutReporter(True))
         stats = neat.StatisticsReporter()
         self.neat_population.add_reporter(stats)
@@ -126,17 +124,28 @@ class Simulation:
 
 
 if __name__ == "__main__":
-    file_prefix = "test-"
-    config_path = "/Users/emilknudsen/Desktop/research/Simple/config.txt"
-    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
-
-    food_distribution = FoodDistribution.Full
-
-    food = Food.get_food_from_food_distribution(food_distribution)
-    fitness_threshold = len(food) - 10
-    config.fitness_threshold = fitness_threshold
+    sensing_mode = SensingMode.Box
     draw = True
     run = StartMode.Winner
+    number_of_inputs = get_number_of_inputs(sensing_mode)
+
+    food_distribution = FoodDistribution.Full
+    food = Food.get_food_from_food_distribution(food_distribution)
+    fitness_threshold = len(food)
+
+
+
+    file_prefix = "test-"
+    config_path = "/Users/emilknudsen/Desktop/research/Simple/config.txt"
+    config_parser = ConfigParser()
+    config_parser.read(config_path)
+    config_parser.set("DefaultGenome", "num_inputs", str(number_of_inputs))
+    #config_parser.set("DefaultGenome", "num_hidden", str(int(number_of_inputs/2)))
+    config_parser.set("NEAT", "fitness_threshold", str(fitness_threshold))
+    with open(config_path, "w+") as f:
+        config_parser.write(f)
+
+    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
 
     simulation = Simulation(config, food)
     simulation.run_neat()

@@ -1,6 +1,6 @@
 from numpy import random
 import pygame
-from Simple.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH, INITIAL_AMOUNT_FOOD, START_POSITION,\
+from Simple_threaded.Classes.constants import SCALE_FACTOR, WORLD_HEIGHT, WORLD_WIDTH, INITIAL_AMOUNT_FOOD, START_POSITION,\
     FoodDistribution
 
 
@@ -22,8 +22,8 @@ class Food:
         food_dict = dict()
         for x in range(0, WORLD_WIDTH, SCALE_FACTOR):
             for y in range(0, WORLD_HEIGHT, SCALE_FACTOR):
-                # if (x, y) == START_POSITION:
-                #     continue
+                if (x, y) == START_POSITION:
+                    continue
                 food_dict[(x, y)] = Food(x, y, 1)
         return food_dict
 

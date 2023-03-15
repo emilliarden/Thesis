@@ -1,6 +1,6 @@
 [NEAT]
 fitness_criterion = max
-fitness_threshold = 1600
+fitness_threshold = 1599
 pop_size = 100
 reset_on_extinction = True
 
@@ -29,7 +29,7 @@ enabled_mutate_rate = 0.05
 feed_forward = False
 initial_connection = full_direct
 num_hidden = 0
-num_inputs = 80
+num_inputs = 48
 num_outputs = 4
 response_init_mean = 1.0
 response_init_stdev = 0.05
