@@ -88,7 +88,7 @@ def simulate(genomes):
             other_robots.remove(agent)
             input_to_nn = agent.sense(food_rects, water, other_robots, quad_tree)
             nn_output = agent.nn.activate(input_to_nn)
-            #nn_output = agent.nn.get_output(input_to_nn)
+            #nn_output = agent.py.nn.get_output(input_to_nn)
 
             #GET NEXT MOVE
             agent.set_motor_speeds(nn_output)

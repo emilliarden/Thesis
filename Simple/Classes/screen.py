@@ -24,14 +24,14 @@ class Screen:
                     pygame.draw.rect(self.screen, (0, 0, 100), rect, 2)
 
                 pygame.draw.rect(self.screen, agent.color, agent.get_rect())
-                # for coord in agent.sensing_rects_after_move:
+                # for coord in agent.py.sensing_rects_after_move:
                 #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                 #     rect.center = coord
                 #     pygame.draw.rect(self.screen, (100, 0, 0), rect, 2)
-                # for coord in agent.previous_positions.queue:
+                # for coord in agent.py.previous_positions.queue:
                 #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                 #     rect.center = coord
-                #     pygame.draw.rect(self.screen, agent.color, rect)
+                #     pygame.draw.rect(self.screen, agent.py.color, rect)
 
         self.update_text(best_robot, timestep, population, food, generation)
         self.clock.tick()

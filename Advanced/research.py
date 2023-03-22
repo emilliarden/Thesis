@@ -106,8 +106,8 @@ def simulate(screen, population, food, water, quad_tree):
 
 
             # population = create_initial_pop(INITIAL_POPULATION_SIZE)
-            # food = Food.create_random_food(water_rects, INITIAL_AMOUNT_FOOD)
-            # food_rects = [f.rect for f in food]
+            # food.py = Food.create_random_food(water_rects, INITIAL_AMOUNT_FOOD)
+            # food_rects = [f.rect for f in food.py]
             # timestep = 0
 
         timestep += 1
@@ -139,7 +139,7 @@ def simulate(screen, population, food, water, quad_tree):
             if pygame.Rect.collidelist(agent_next_rect, other_robots_rects) == -1:
                 agent.simulation_step()
                 agent_current_rect = agent.get_rect()
-                #agent.move_robot(nn_output)
+                #agent.py.move_robot(nn_output)
 
             collides_with_food_at_position = pygame.Rect.collidelist(agent_current_rect, food_rects)
             while collides_with_food_at_position > -1:
@@ -163,7 +163,7 @@ def simulate(screen, population, food, water, quad_tree):
 
         rank_of_robots = sorted(population, key=lambda x: x.age, reverse=True)
         oldest_robot = rank_of_robots[0] if len(rank_of_robots) > 0 else Agent()
-        #update_display(food, timestep, oldest_robot, clock)
+        #update_display(food.py, timestep, oldest_robot, clock)
 
 def update_display(food, timestep, oldest_robot, clock):
     screen.fill(BACKGROUND_COLOR)

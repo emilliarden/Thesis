@@ -3,7 +3,7 @@ import random
 import pygame
 from enum import Enum
 
-SCALE_FACTOR = 20
+SCALE_FACTOR = 10
 WORLD_HEIGHT = 800
 WORLD_WIDTH = 800
 WORLD_SQUARES = WORLD_WIDTH/SCALE_FACTOR*WORLD_HEIGHT/SCALE_FACTOR
@@ -13,7 +13,7 @@ FOOD2_COLOR = (195, 0, 195)
 TEXT_COLOR = (255, 165, 0)
 BACKGROUND_COLOR = (255, 255, 255)
 INITIAL_POPULATION_SIZE = 10
-INITIAL_AMOUNT_FOOD = 1500
+INITIAL_AMOUNT_FOOD = 5000
 SENSING_DISTANCE = 4
 START_POSITION = (0, 0)
 
@@ -50,4 +50,6 @@ def get_number_of_inputs(sensing_mode):
         elif SENSING_DISTANCE == 1:
             number_of_inputs = 4
 
-    return number_of_inputs
+    return number_of_inputs + 2 + 4
+
+

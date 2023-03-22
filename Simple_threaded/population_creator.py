@@ -20,7 +20,7 @@ def create_population(config, food, file_prefix):
 
 
 def create_pop(config, file_prefix):
-    with open(file_prefix + "winner.pkl", "rb") as f:
+    with open("/Users/emilknudsen/Desktop/research/Simple/random_food_random_pos-winner.pkl", "rb") as f:
         genome = pickle.load(f)
 
     genome_indexer = count(1)

@@ -6,7 +6,7 @@ plt.rcParams["figure.autolayout"] = True
 
 headers = ['Fitness', 'Generation']
 
-df = pd.read_csv('fitness_history1.csv', names=headers, usecols=[0], sep=' ')
+df = pd.read_csv('fitness_history_same_random_food1.csv', names=headers, usecols=[0], sep=' ')
 print(df)
 
 ax = df.plot(title='Fitness per generation (full arena)')

@@ -10,8 +10,8 @@ class Agent:
     def __init__(self, genome, config, sensing_mode):
         self.x = START_POSITION[0]
         self.y = START_POSITION[1]
-        self.x = round(random.randint(0, WORLD_WIDTH) / SCALE_FACTOR) * SCALE_FACTOR
-        self.y = round(random.randint(0, WORLD_HEIGHT) / SCALE_FACTOR) * SCALE_FACTOR
+        #self.x = round(random.randint(0, WORLD_WIDTH) / SCALE_FACTOR) * SCALE_FACTOR
+        #self.y = round(random.randint(0, WORLD_HEIGHT) / SCALE_FACTOR) * SCALE_FACTOR
         self.size = SCALE_FACTOR
         self.color = (200, 8, 8)
         self.sensing_distance = SENSING_DISTANCE
@@ -27,6 +27,7 @@ class Agent:
         self.timesteps_alive = 0
         self.sensing_mode = sensing_mode
         self.visited_squares = set()
+        self.previous_output = [0,0,0,0]
 
     def get_center_coord(self):
         return self.x, self.y
@@ -35,34 +36,6 @@ class Agent:
         rect = pygame.Rect(self.x, self.y, self.size, self.size)
         rect.center = (self.x, self.y)
         return rect
-
-    def get_best_move(self, simulation):
-        coords = [(self.x, self.y - SCALE_FACTOR), (self.x + SCALE_FACTOR, self.y),
-                  (self.x, self.y + SCALE_FACTOR), (self.x - SCALE_FACTOR, self.y),
-                  (self.x, self.y - SCALE_FACTOR * 2), (self.x + SCALE_FACTOR * 2, self.y),
-                  (self.x, self.y + SCALE_FACTOR * 2), (self.x - SCALE_FACTOR * 2, self.y),
-                  (self.x, self.y - SCALE_FACTOR * 3), (self.x + SCALE_FACTOR * 3, self.y),
-                  (self.x, self.y + SCALE_FACTOR * 3), (self.x - SCALE_FACTOR * 3, self.y)]
-
-        west = [coords[3], coords[7], coords[11]]
-        east = [coords[1], coords[5], coords[9]]
-        north = [coords[0], coords[4], coords[8]]
-        south = [coords[2], coords[6], coords[10]]
-
-        directions = [west, east, north, south]
-
-        best_direction_count = 0
-        best_direction_index = 0
-
-        for i, l in enumerate(directions):
-            count_of_food = 0
-            for coord in l:
-                if coord in simulation.food:
-                    count_of_food += 1
-            if count_of_food > best_direction_count:
-                best_direction_index = i
-
-        return best_direction_index
 
     def move(self, simulation):
         if self.previous_positions.full():
@@ -76,7 +49,12 @@ class Agent:
         elif self.sensing_mode == SensingMode.Cross:
             sensed = self.sense_cross(simulation)
 
-        nn_output = self.nn.activate(sensed)
+
+        sensed.append(self.x/WORLD_WIDTH)
+        sensed.append(self.y/WORLD_HEIGHT)
+
+        nn_output = self.nn.activate(sensed + self.previous_output)
+        self.previous_output = nn_output
         nn_action = nn_output.index(max(nn_output))
 
         if nn_action == 0:

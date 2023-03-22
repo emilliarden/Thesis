@@ -77,13 +77,13 @@ class Agent:
         closest_food_and_distance = self.closest_food_and_distance((self.x, self.y),
                                                                    sensed_food) if amount_of_food_in_sensing_area > 0 else None
         closest_food_distance = 0
-        # TODO: Think about what the angle should be when no food is detected
+        # TODO: Think about what the angle should be when no food.py is detected
         angle_to_food = 0
 
         if closest_food_and_distance != None:
             closest_food = closest_food_and_distance[0]
             closest_food_distance = closest_food_and_distance[1]
-            # Angle to food:
+            # Angle to food.py:
             direction_vector = [math.cos(self.q), math.sin(self.q)]
             food_vector = [max(self.x, closest_food[0]) - min(self.x, closest_food[0]),
                            max(self.y, closest_food[1]) - min(self.y, closest_food[1])]
@@ -110,7 +110,7 @@ class Agent:
         # #AGENTS---------------------------
         amount_of_agents_in_sensing_area = 0
         distance_to_closest_agent = self.sensing_distance
-        # TODO: Think about what the angle should be when no agent is detected
+        # TODO: Think about what the angle should be when no agent.py is detected
         angle_to_closest_agent = 0
         for a in population:
             if point_inside_polygon(a.x, a.y, sensing_rect):
