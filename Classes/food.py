@@ -18,8 +18,7 @@ class Food:
         return rect
 
 
-
-class Food_Creater:
+class FoodCreater:
     def __init__(self, constants):
         self.constants = constants
         self.food_distribution = self.constants.FOOD_DISTRIBUTION
@@ -36,7 +35,7 @@ class Food_Creater:
         elif self.food_distribution == FoodDistribution.Unfull_20:
             return self.unfull_arena(0.2)
         elif self.food_distribution == FoodDistribution.Clusters:
-            return self.clusters_arena(2000)
+            return self.clusters_arena()
         elif self.food_distribution == FoodDistribution.Corners:
             return self.corners_arena
 
@@ -49,6 +48,7 @@ class Food_Creater:
         return food_dict
 
     def unfull_arena(self, percentage):
+        random.seed(42)
         food_dict = dict()
         while len(food_dict) < self.constants.WORLD_SQUARES * percentage:
             x = round(random.randint(0, self.constants.WORLD_WIDTH) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
@@ -64,16 +64,23 @@ class Food_Creater:
         corner1 = random.random()
 
 
-    def clusters_arena(self, amount_of_clusters):
+    def clusters_arena(self):
+        random.seed(42)
         food_dict = dict()
-        for i in range(amount_of_clusters):
-            random_x = round(random.randint(0, self.constants.WORLD_WIDTH) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
-            random_y = round(random.randint(0, self.constants.WORLD_HEIGHT) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
-
-            cluster_coords = self.get_neighbours(random_x, random_y)
-            for (x, y) in cluster_coords:
-                food_dict[(x, y)] = Food(x, y, 1)
-
+        while len(food_dict) < 0.5 * self.constants.WORLD_SQUARES:
+            x = round(random.randint(0, self.constants.WORLD_WIDTH) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
+            y = round(random.randint(0, self.constants.WORLD_HEIGHT) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
+            if (x, y) not in food_dict:
+                food_dict[(x, y)] = Food(x, y, 1, self.constants)
+                for j in range(15):
+                    dx = round(random.randint(-50, 50) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
+                    dy = round(random.randint(-50, 50) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
+                    while (x + dx, y + dy) in food_dict or x + dx < 0 or x + dx > 800 or y + dy < 0 or y + dy > 800:
+                        dx = round(random.randint(-50, 50) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
+                        dy = round(random.randint(-50, 50) / self.constants.SCALE_FACTOR) * self.constants.SCALE_FACTOR
+                    x += dx
+                    y += dy
+                    food_dict[(x, y)] = Food(x, y, 1, self.constants)
         return food_dict
 
     def get_neighbors(self, x, y):

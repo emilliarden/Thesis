@@ -2,7 +2,7 @@ import copy
 import pygame
 import pickle
 
-from Classes.food import Food, Food_Creater
+from Classes.food import Food, FoodCreater
 from Classes.screen import Screen
 from Classes.agent import Agent
 from Classes.constants import Constants
@@ -12,9 +12,9 @@ class SimulationSingle:
     def __init__(self, constants, neat_population, config):
         pygame.init()
         self.constants = constants
-        self.screen = Screen()
+        self.screen = Screen(self.constants)
         self.neat_population = neat_population
-        self.food_creater = Food_Creater(self.constants)
+        self.food_creater = FoodCreater(self.constants)
         self.original_food = self.food_creater.get_food()
         self.food = dict.copy(self.original_food)
         self.population = None

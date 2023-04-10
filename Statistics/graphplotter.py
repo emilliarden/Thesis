@@ -11,8 +11,8 @@ def compare_neat_with_full_fullarena():
 
     headers = ['Max']
 
-    files_full = glob.glob("Full_Arena/config_full_direct/*.csv")
-    files_neat = glob.glob("Full_Arena/config_fs_neat_nohidden/*.csv")
+    files_full = glob.glob("Full_Arena/full_direct/*.csv")
+    files_neat = glob.glob("Full_Arena/fs_neat_nohidden/*.csv")
 
     column_names_full = []
     for i in range(1, len(files_full) + 1):

@@ -4,7 +4,7 @@ import pygame
 import pickle
 from configparser import ConfigParser
 
-from Classes.food import Food, Food_Creater
+from Classes.food import Food, FoodCreater
 from Classes.screen import Screen
 from Classes.competition_agent import CompetitionAgent
 
@@ -14,7 +14,7 @@ class SimulationCompetition:
         pygame.init()
         self.timestep = 0
         self.constants = constants
-        self.screen = Screen()
+        self.screen = Screen(self.constants)
         self.neat_population = neat_population
         self.food_creater = Food_Creater(self.constants)
         self.original_food = self.food_creater.get_food()

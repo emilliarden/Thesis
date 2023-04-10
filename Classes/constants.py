@@ -7,10 +7,11 @@ class Constants:
         self.WORLD_WIDTH = 800
         self.WORLD_SQUARES = self.WORLD_WIDTH/self.SCALE_FACTOR*self.WORLD_HEIGHT/self.SCALE_FACTOR
         self.WATER_COLOR = (0, 157, 196)
-        self.FOOD_COLOR = (0, 154, 23)
+        self.FOOD_COLOR = (124, 252, 0)
         self.FOOD2_COLOR = (195, 0, 195)
         self.TEXT_COLOR = (255, 165, 0)
-        self.BACKGROUND_COLOR = (255, 255, 255)
+        self.BACKGROUND_COLOR = (0, 0, 0)
+        self.LINE_COLOR = (255, 255, 255)
         self.SENSING_DISTANCE = 3
         self.START_POSITION = (self.WORLD_WIDTH/2, self.WORLD_HEIGHT/2)
         self.CONFIG_PATH = "config.txt"
