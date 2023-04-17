@@ -44,8 +44,9 @@ class CompetitionAgent:
         elif self.sensing_mode == SensingMode.Cross:
             sensed = self.sense_cross(simulation)
 
-        #sensed.append(self.x / self.constants.WORLD_WIDTH)
-        #sensed.append(self.y / self.constants.WORLD_HEIGHT)
+        sensed.append(self.x / self.constants.WORLD_WIDTH)
+        sensed.append(self.y / self.constants.WORLD_HEIGHT)
+        sensed.append(self.timesteps_without_progress / self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS)
 
         nn_output = self.nn.activate(sensed + self.last_nn_output)
         self.last_nn_output = nn_output
@@ -92,8 +93,6 @@ class CompetitionAgent:
                         output.append(1)
                     else:
                         output.append(0)
-
-        output.append(self.timesteps_without_progress/self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS)
         return output
 
     # def sense_pyramid(self, simulation):

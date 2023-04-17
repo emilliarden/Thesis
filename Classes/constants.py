@@ -46,7 +46,7 @@ class Constants:
 
     def get_fitness_threshold(self):
         if self.FOOD_DISTRIBUTION == FoodDistribution.Full:
-            return self.WORLD_SQUARES * 0.9
+            return self.WORLD_SQUARES - 1
         elif self.FOOD_DISTRIBUTION == FoodDistribution.Unfull_80:
             return self.WORLD_SQUARES * 0.8 * 0.9
         elif self.FOOD_DISTRIBUTION == FoodDistribution.Unfull_60:
@@ -59,6 +59,8 @@ class Constants:
             return self.WORLD_SQUARES * 0.5 * 0.9
         elif self.FOOD_DISTRIBUTION == FoodDistribution.Corners:
             return 10000000 * 0.9
+        elif self.FOOD_DISTRIBUTION == FoodDistribution.Spiral:
+            return 860
 
 
 
@@ -75,6 +77,7 @@ class FoodDistribution(Enum):
     Corners = 6
     Clusters = 7
     Circle = 8
+    Spiral = 9
 
 
 class StartMode(Enum):

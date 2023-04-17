@@ -1,6 +1,6 @@
 [NEAT]
 fitness_criterion = max
-fitness_threshold = 864.0
+fitness_threshold = 1152.0
 pop_size = 100
 reset_on_extinction = False
 
@@ -27,7 +27,7 @@ node_delete_prob = 0.5
 enabled_default = True
 enabled_mutate_rate = 0.05
 feed_forward = False
-initial_connection = full
+initial_connection = full_direct
 num_hidden = 0
 num_inputs = 151
 num_outputs = 4
@@ -52,8 +52,8 @@ compatibility_threshold = 3
 
 [DefaultStagnation]
 species_fitness_func = max
-max_stagnation = 300
-species_elitism = 0
+max_stagnation = 200
+species_elitism = 1
 
 [DefaultReproduction]
 elitism = 2

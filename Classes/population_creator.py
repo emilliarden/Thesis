@@ -10,6 +10,7 @@ def get_population_and_config_and_stats(constants, file_to_create_pop_from=""):
     print(f"Creating and updating config!")
 
     print(f"Finding genome with fitness: " + str(constants.FITNESS_THRESH))
+    print(f"And with allowed moves without progress: " + str(constants.ALLOWED_MOVES_WITHOUT_PROGRESS))
     config_parser = ConfigParser()
     config_parser.read(constants.CONFIG_PATH)
     config_parser.set("DefaultGenome", "num_inputs", str(constants.NUM_INPUTS))

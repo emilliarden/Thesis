@@ -16,7 +16,7 @@ class SimulationCompetition:
         self.constants = constants
         self.screen = Screen(self.constants)
         self.neat_population = neat_population
-        self.food_creater = Food_Creater(self.constants)
+        self.food_creater = FoodCreater(self.constants)
         self.original_food = self.food_creater.get_food()
         self.food = dict.copy(self.original_food)
         self.population = None

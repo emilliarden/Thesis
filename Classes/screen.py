@@ -21,19 +21,15 @@ class Screen:
         self.draw_food(food)
         for agent in population:
             if not agent.out_of_bounds:
-                for coord in agent.sensing_rects_before_move:
-                    rect = pygame.Rect(coord[0], coord[1], self.constants.SCALE_FACTOR, self.constants.SCALE_FACTOR)
-                    rect.center = coord
-                    pygame.draw.rect(self.screen, (0, 0, 100), rect, 1)
+                # for coord in agent.sensing_rects:
+                #     rect = pygame.Rect(coord[0], coord[1], self.constants.SCALE_FACTOR, self.constants.SCALE_FACTOR)
+                #     rect.center = coord
+                #     pygame.draw.rect(self.screen, (0, 0, 100), rect, 5)
 
                 agent_img = pygame.image.load('/Users/emilknudsen/Desktop/research/sheep.png').convert_alpha()
                 agent_img = pygame.transform.scale(agent_img, (self.constants.SCALE_FACTOR, self.constants.SCALE_FACTOR))
                 self.screen.blit(agent_img, agent.get_rect())
-                #pygame.draw.rect(self.screen, agent.color, agent.get_rect())
-                # for coord in agent.py.sensing_rects_after_move:
-                #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
-                #     rect.center = coord
-                #     pygame.draw.rect(self.screen, (100, 0, 0), rect, 2)
+
                 # for coord in agent.py.previous_positions.queue:
                 #     rect = pygame.Rect(coord[0], coord[1], SCALE_FACTOR, SCALE_FACTOR)
                 #     rect.center = coord

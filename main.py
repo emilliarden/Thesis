@@ -1,6 +1,7 @@
 import pickle
 import shutil
 import os
+import glob
 
 from Classes.population_creator import get_population_and_config_and_stats
 from Classes.constants import Constants, FoodDistribution, StartMode, SensingMode, StartType
@@ -8,10 +9,8 @@ from Classes.simulation_single import SimulationSingle
 from Classes.simulation_competition import SimulationCompetition
 
 
-def create_pop_and_find_winner(constants, rounds_to_run=None):
-    neat_population, config, stats = get_population_and_config_and_stats(constants,
-                                                                         '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat_nohidden/winner2.pkl')
-
+def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file=""):
+    neat_population, config, stats = get_population_and_config_and_stats(constants, winner_file)
     if constants.START_TYPE == StartType.Single:
         simulation = SimulationSingle(constants, neat_population, config)
     elif constants.START_TYPE == StartType.Competition:
@@ -30,16 +29,16 @@ def create_pop_and_find_winner(constants, rounds_to_run=None):
 
 
 
-def move_and_delete_files(index, error=False):
+def move_and_delete_files(filename, error=False):
     # Move winner Genome
-    if not error:
+    if os.path.exists("winner.pkl"):
         src_path = "winner.pkl"
-        dst_path = r"Statistics/Unfull_Arena/60_percent/TrainedOnFull/winner" + str(index) + ".pkl"
+        dst_path = r"Statistics/Unfull_Arena/80_percent/New_full_direct/2000gens/winner" + str(filename) + ".pkl"
         shutil.move(src_path, dst_path)
 
     # Move stats
     src_path = "fitness_history.csv"
-    dst_path = r"Statistics/Unfull_Arena/60_percent/TrainedOnFull/fitness_history" + str(index) + ".csv"
+    dst_path = r"Statistics/Unfull_Arena/80_percent/New_full_direct/2000gens/fitness_history" + str(filename) + ".csv"
     shutil.move(src_path, dst_path)
 
     # Remove unnecessary files
@@ -49,24 +48,27 @@ def move_and_delete_files(index, error=False):
 
 
 if __name__ == "__main__":
-    start_mode = StartMode.Winner
+    start_mode = StartMode.New
     start_type = StartType.Single
     sensing_mode = SensingMode.Box
-    food_distribution = FoodDistribution.Unfull_60
+    food_distribution = FoodDistribution.Unfull_80
     draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    create_pop_and_find_winner(constants=constants, rounds_to_run=1000)
+    create_pop_and_find_winner(constants=constants, rounds_to_run=1000, winner_file='')
 
-
-    for i in range(5):
+    #
+    #for file in glob.glob("Statistics/Full_Arena/fs_neat_nohidden/*.pkl")[3:6]:
+    for i in range(2, 5):
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=1000)
+            create_pop_and_find_winner(constants=constants, rounds_to_run=2000)
         except:
             move_and_delete_files(i, True)
         else:
             move_and_delete_files(i)
+
+
 
 

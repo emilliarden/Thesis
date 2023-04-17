@@ -13,8 +13,7 @@ class Agent:
         self.size = constants.SCALE_FACTOR
         self.color = (200, 8, 8)
         self.sensing_distance = constants.SENSING_DISTANCE
-        self.sensing_rects_before_move = []
-        self.sensing_rects_after_move = []
+        self.sensing_rects = []
         self.previous_positions = queue.Queue(10)
         self.genome = genome
         self.nn = neat.nn.RecurrentNetwork.create(genome, config)
@@ -65,55 +64,51 @@ class Agent:
         elif nn_action == 3:
             self.y += self.constants.SCALE_FACTOR
 
+        self.set_sensing_rects()
+
         return self.x, self.y
 
     def sense_box(self, simulation):
         output = []
-        self.sensing_rects_before_move = []
 
         for i in range(-self.constants.SENSING_DISTANCE, self.constants.SENSING_DISTANCE + 1):
             for j in range(-self.constants.SENSING_DISTANCE, self.constants.SENSING_DISTANCE + 1):
                 coord = (self.x + self.constants.SCALE_FACTOR * i, self.y + self.constants.SCALE_FACTOR * j)
                 if coord == (self.x, self.y):
                     continue
-                else:
-                    self.sensing_rects_before_move.append(coord)
 
                     #Output for food-----------
-                    if coord in simulation.food:
-                        output.append(1)
-                    else:
-                        output.append(0)
-                    #Output for edge-----------
-                    if coord[0] < 0 or coord[0] > self.constants.WORLD_WIDTH or coord[1] < 0 or coord[1] > self.constants.WORLD_HEIGHT:
-                        output.append(1)
-                    else:
-                        output.append(0)
-
-                    #Output for other robots always 0 in single agent---------
+                if coord in simulation.food:
+                    output.append(1)
+                else:
                     output.append(0)
+                #Output for edge-----------
+                if coord[0] < 0 or coord[0] > self.constants.WORLD_WIDTH or coord[1] < 0 or coord[1] > self.constants.WORLD_HEIGHT:
+                    output.append(1)
+                else:
+                    output.append(0)
+
+                #Output for other robots always 0 in single agent---------
+                output.append(0)
 
         return output
 
     def sense_boxDiff(self, simulation):
         output = []
-        self.sensing_rects_before_move = []
 
         for i in range(-self.constants.SENSING_DISTANCE, self.constants.SENSING_DISTANCE + 1):
             for j in range(-self.constants.SENSING_DISTANCE, self.constants.SENSING_DISTANCE + 1):
                 coord = (self.x + self.constants.SCALE_FACTOR * i, self.y + self.constants.SCALE_FACTOR * j)
                 if coord == (self.x, self.y):
                     continue
-                else:
-                    self.sensing_rects_before_move.append(coord)
 
-                    #Output for food-----------
-                    if coord in simulation.food:
-                        output.append(ContentOfSquare.Food.value)
-                    elif coord[0] < 0 or coord[0] > self.constants.WORLD_WIDTH or coord[1] < 0 or coord[1] > self.constants.WORLD_HEIGHT:
-                        output.append(ContentOfSquare.OutsideArena.value)
-                    else:
-                        output.append(ContentOfSquare.Empty.value)
+                #Output for food-----------
+                if coord in simulation.food:
+                    output.append(ContentOfSquare.Food.value)
+                elif coord[0] < 0 or coord[0] > self.constants.WORLD_WIDTH or coord[1] < 0 or coord[1] > self.constants.WORLD_HEIGHT:
+                    output.append(ContentOfSquare.OutsideArena.value)
+                else:
+                    output.append(ContentOfSquare.Empty.value)
 
         return output
 
@@ -159,4 +154,14 @@ class Agent:
     #             output.append(0.5)
     #
     #     return output
+
+    def set_sensing_rects(self):
+        self.sensing_rects = []
+        for i in range(-self.constants.SENSING_DISTANCE, self.constants.SENSING_DISTANCE + 1):
+            for j in range(-self.constants.SENSING_DISTANCE, self.constants.SENSING_DISTANCE + 1):
+                coord = (self.x + self.constants.SCALE_FACTOR * i, self.y + self.constants.SCALE_FACTOR * j)
+                if coord == (self.x, self.y):
+                    continue
+                else:
+                    self.sensing_rects.append(coord)
 

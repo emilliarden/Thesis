@@ -1,7 +1,10 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import glob
+from visualize import draw_net
+import neat
+import pickle
 
 
 
@@ -32,33 +35,82 @@ def compare_neat_with_full_fullarena():
         df = pd.read_csv(filename, names=headers, usecols=[0], sep=' ')
         li_neat.append(df)
 
-
+    # full_direct -----------------------------------------------------
     frame_full = pd.concat(li_full, axis=1, ignore_index=True)
     frame_full.fillna(method='ffill', inplace=True)
     frame_full['Mean'] = frame_full.mean(axis=1)
-    column_names_full.append("Mean")
-    frame_full.columns = column_names_full
-
-    ax = frame_full["Mean"].plot(title='Max Fitness Each generation (full arena full_direct)', label="xxxxx")
-    ax.set_xlabel("Generation")
-    ax.set_ylabel("Fitness")
-    ax.axhline(y=1440, color='r', linestyle='--')
+    #frame_full['Mean'].mask(frame_full['Mean'] >= 1440, np.nan, inplace=True)
 
 
-#-----------------------------------------------------
+
+    # fs_neat_nohidden -----------------------------------------------------
 
     frame_neat = pd.concat(li_neat, axis=1, ignore_index=True)
     frame_neat.fillna(method='ffill', inplace=True)
     frame_neat['Mean'] = frame_neat.mean(axis=1)
-    column_names_neat.append("Mean")
-    frame_neat.columns = column_names_neat
-    print(frame_neat)
+    #frame_neat['Mean'].mask(frame_neat['Mean'] >= 1440, np.nan, inplace=True)
 
-    ax = frame_neat["Mean"].plot(title='Max Fitness Each Generation (full arena fs_neat_nohidden)', label="yyyyyy")
-    #ax.set_xlabel("Generation")
-    #ax.set_ylabel("Fitness")
-    #ax.axhline(y=1440, color='r', linestyle='--')
+    # random --------------------------------------------------------------
+    random_df = pd.read_csv('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/fitness_history_random.csv', names=headers, usecols=[0], sep=' ')
 
+    #----------------------------------------------------------------------
+    mean_frame = pd.concat([frame_neat['Mean'], frame_full['Mean'], random_df], axis=1, ignore_index=True)
+    mean_frame.columns = ['FS Neat', 'Full', 'Random']
+    ax = mean_frame.plot(title='Base case')
+    print(mean_frame)
+
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Fitness")
+    ax.axhline(y=1440, color='purple', linestyle='--')
+    ax.axhline(y=1600, color='purple', linestyle='--')
+
+    plt.show()
+
+
+
+def base_case_all_runs():
+    plt.rcParams["figure.autolayout"] = True
+    plt.rcParams["figure.figsize"] = [8.50, 3.50]
+
+    files_neat = glob.glob("Full_Arena/fs_neat_nohidden/*.csv")
+    files_fullyconnected = glob.glob("Full_Arena/full_direct/*.csv")
+    file_random = glob.glob("Full_Arena/random_run/*.csv")
+    shades_of_red = ['#ff0000', '#d70000', '#c60000', '#b70000', '#9b0000', '#ff0000', '#d70000', '#c60000', '#b70000', '#9b0000']
+    shades_of_green = ['#22b600', '#26cc00', '#7be382', '#006400', '#009c1a', '#22b600', '#26cc00', '#7be382', '#006400', '#009c1a']
+    random_color = '#22ff00'
+
+    color_dict = dict()
+    column_names = []
+
+    for i in range(1, len(files_neat) + 1):
+        column_name = 'Neat ' + str(i)
+        column_names.append(column_name)
+        color_dict[column_name] = shades_of_green[i - 1]
+
+    for i in range(1, len(files_fullyconnected) + 1):
+        column_name = 'Full ' + str(i)
+        column_names.append(column_name)
+        color_dict[column_name] = shades_of_red[i - 1]
+
+    column_name = 'Random'
+    column_names.append(column_name)
+    color_dict[column_name] = random_color
+
+    li = []
+    for filename in files_neat + files_fullyconnected + file_random:
+        df = pd.read_csv(filename, usecols=[0], sep=' ')
+        li.append(df)
+
+    frame = pd.concat(li, axis=1, ignore_index=True)
+    frame.columns = column_names
+
+    ax = frame.plot(title='Max fitness base case', color=color_dict)
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Fitness")
+    ax.axhline(y=1440, color='purple', linestyle='--')
+    ax.axhline(y=1600, color='purple', linestyle='--')
+
+    # -----------------------------------------------------
     plt.show()
 
 
@@ -106,8 +158,19 @@ def compare_unfull_80():
     plt.show()
 
 
+def create_genome_graph(winner_file, filename):
+    #create genome from pkl
+    with open(winner_file, "rb") as f:
+        genome = pickle.load(f)
+
+    #get config file
+    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet, neat.DefaultStagnation, '/Users/emilknudsen/Desktop/research/config.txt' )
+
+    draw_net(config, genome, view=True, show_disabled=False, filename=filename)
 
 
 if __name__ == "__main__":
     compare_unfull_80()
     #compare_neat_with_full_fullarena()
+    #base_case_all_runs()
+    #create_genome_graph('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat_nohidden/winner2.pkl', filename="fs_neat.svg")
