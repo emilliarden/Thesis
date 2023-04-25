@@ -1,6 +1,8 @@
 import pygame
 import os
 
+from Classes.constants import StartType
+
 
 class Screen:
     def __init__(self, constants):
@@ -15,16 +17,17 @@ class Screen:
         pygame.display.set_caption('Evolution')
         return screen
 
-    def update_display(self, best_robot, timestep, food, population, generation):
+    def update_display(self, best_robot, timestep, food, water, population, generation):
         self.screen.fill(self.constants.BACKGROUND_COLOR)
-
         self.draw_food(food)
+        self.draw_water(water)
         for agent in population:
             if not agent.out_of_bounds:
-                # for coord in agent.sensing_rects:
-                #     rect = pygame.Rect(coord[0], coord[1], self.constants.SCALE_FACTOR, self.constants.SCALE_FACTOR)
-                #     rect.center = coord
-                #     pygame.draw.rect(self.screen, (0, 0, 100), rect, 5)
+                if self.constants.START_TYPE == StartType.Single:
+                    for coord in agent.sensing_rects:
+                        rect = pygame.Rect(coord[0], coord[1], self.constants.SCALE_FACTOR, self.constants.SCALE_FACTOR)
+                        rect.center = coord
+                        pygame.draw.rect(self.screen, (0, 0, 100), rect, 5)
 
                 agent_img = pygame.image.load('/Users/emilknudsen/Desktop/research/sheep.png').convert_alpha()
                 agent_img = pygame.transform.scale(agent_img, (self.constants.SCALE_FACTOR, self.constants.SCALE_FACTOR))
@@ -56,9 +59,11 @@ class Screen:
                                self.constants.SCALE_FACTOR / 2 - 2)
             # pygame.draw.rect(self.screen, self.constants.FOOD_COLOR, f[1].get_rect())
 
-    def draw_water(self):
-        for w in self.water:
-            pygame.draw.rect(self.screen, self.constants.WATER_COLOR, w)
+    def draw_water(self, water):
+        for w in water.keys():
+            rect = pygame.Rect(w[0], w[1], self.constants.SCALE_FACTOR, self.constants.SCALE_FACTOR)
+            rect.center = w[0], w[1]
+            pygame.draw.rect(self.screen, self.constants.WATER_COLOR, rect, self.constants.SCALE_FACTOR)
 
     def update_text(self, best_robot, timestep, population, food, generation):
         text = self.font.render("Timestep: " + str(timestep), True, self.constants.TEXT_COLOR)

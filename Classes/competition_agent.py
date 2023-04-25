@@ -1,7 +1,7 @@
 import pygame
 import neat
 import queue
-from Classes.constants import Constants, SensingMode
+from Classes.constants import Constants, SensingMode, ContentOfSquare
 
 
 class CompetitionAgent:
@@ -12,8 +12,7 @@ class CompetitionAgent:
         self.size = constants.SCALE_FACTOR
         self.color = (200, 8, 8)
         self.sensing_distance = constants.SENSING_DISTANCE
-        self.sensing_rects_before_move = []
-        self.sensing_rects_after_move = []
+        self.sensing_rects = []
         self.previous_positions = queue.Queue(10)
         self.genome = genome
         self.nn = neat.nn.RecurrentNetwork.create(genome, config)
@@ -37,12 +36,10 @@ class CompetitionAgent:
             self.previous_positions.get()
         self.previous_positions.put((self.x, self.y))
 
-        if self.sensing_mode == SensingMode.Pyramid:
-            sensed = self.sense_pyramid(simulation)
+        if self.sensing_mode == SensingMode.BoxDiff:
+            sensed = self.sense_boxDiff(simulation)
         elif self.sensing_mode == SensingMode.Box:
             sensed = self.sense_box(simulation)
-        elif self.sensing_mode == SensingMode.Cross:
-            sensed = self.sense_cross(simulation)
 
         sensed.append(self.x / self.constants.WORLD_WIDTH)
         sensed.append(self.y / self.constants.WORLD_HEIGHT)
@@ -95,43 +92,28 @@ class CompetitionAgent:
                         output.append(0)
         return output
 
-    # def sense_pyramid(self, simulation):
-    #     output = []
-    #
-    #     coords = []
-    #     #height of pyramid
-    #     n = SENSING_DISTANCE
-    #     lr = 0
-    #
-    #     for i in range(n, -1, -1):
-    #         y = self.y + i * SCALE_FACTOR
-    #         for j in range(lr+1):
-    #             x1 = self.x + SCALE_FACTOR*j
-    #             x2 = self.x - SCALE_FACTOR*j
-    #             coords.append((x1, y))
-    #             coords.append((x2, y))
-    #         lr += 1
-    #
-    #     lr = 0
-    #     for i in range(n, 0, -1):
-    #         y = self.y - i * SCALE_FACTOR
-    #         for j in range(lr+1):
-    #             x1 = self.x + SCALE_FACTOR*j
-    #             x2 = self.x - SCALE_FACTOR*j
-    #             coords.append((x1, y))
-    #             coords.append((x2, y))
-    #         lr += 1
-    #
-    #     coords.remove((self.x, self.y))
-    #
-    #     self.sensing_rects_before_move = coords
-    #
-    #     for coord in coords:
-    #         if coord in simulation.food:
-    #             output.append(1)
-    #         elif coord[0] < 0 or coord[0] > WORLD_WIDTH or coord[1] < 0 or coord[1] > WORLD_HEIGHT:
-    #             output.append(0)
-    #         else:
-    #             output.append(0.5)
-    #
-    #     return output
+
+    def sense_boxDiff(self, simulation):
+        output = []
+        other_agent_coords = [(a.x, a.y) for a in simulation.population]
+
+        for i in range(-self.constants.SENSING_DISTANCE, self.constants.SENSING_DISTANCE + 1):
+            for j in range(-self.constants.SENSING_DISTANCE, self.constants.SENSING_DISTANCE + 1):
+                coord = (self.x + self.constants.SCALE_FACTOR * i, self.y + self.constants.SCALE_FACTOR * j)
+                if coord == (self.x, self.y):
+                    continue
+
+
+                #Output for food-----------
+                if coord in simulation.food:
+                    output.append(ContentOfSquare.Food.value)
+                elif coord[0] < 0 or coord[0] > self.constants.WORLD_WIDTH or coord[1] < 0 or coord[1] > self.constants.WORLD_HEIGHT:
+                    output.append(ContentOfSquare.OutsideArena.value)
+                elif coord in simulation.water:
+                    output.append(ContentOfSquare.Water.value)
+                elif coord in other_agent_coords:
+                    output.append(ContentOfSquare.OtherRobot.value)
+                else:
+                    output.append(ContentOfSquare.Empty.value)
+
+        return output

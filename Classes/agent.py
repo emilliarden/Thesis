@@ -22,7 +22,7 @@ class Agent:
         self.timesteps_alive = 0
         self.sensing_mode = constants.SENSING_MODE
         self.energy = self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS
-        self.last_nn_output = [0,0,0,0]
+        self.last_nn_output = [0, 0, 0, 0]
 
     def get_center_coord(self):
         return self.x, self.y
@@ -89,7 +89,10 @@ class Agent:
                     output.append(0)
 
                 #Output for other robots always 0 in single agent---------
-                output.append(0)
+                if coord in simulation.water:
+                    output.append(1)
+                else:
+                    output.append(0)
 
         return output
 
@@ -107,6 +110,8 @@ class Agent:
                     output.append(ContentOfSquare.Food.value)
                 elif coord[0] < 0 or coord[0] > self.constants.WORLD_WIDTH or coord[1] < 0 or coord[1] > self.constants.WORLD_HEIGHT:
                     output.append(ContentOfSquare.OutsideArena.value)
+                elif coord in simulation.water:
+                    output.append(ContentOfSquare.Water.value)
                 else:
                     output.append(ContentOfSquare.Empty.value)
 

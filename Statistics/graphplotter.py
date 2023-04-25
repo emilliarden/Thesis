@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import glob
-from visualize import draw_net
+from visualize import draw_net, draw_net_without_all_nodes
 import neat
 import pickle
 
@@ -166,11 +166,11 @@ def create_genome_graph(winner_file, filename):
     #get config file
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet, neat.DefaultStagnation, '/Users/emilknudsen/Desktop/research/config.txt' )
 
-    draw_net(config, genome, view=True, show_disabled=False, filename=filename)
+    draw_net_without_all_nodes(config, genome, view=True, show_disabled=False, filename=filename)
 
 
 if __name__ == "__main__":
-    compare_unfull_80()
+    #compare_unfull_80()
     #compare_neat_with_full_fullarena()
     #base_case_all_runs()
-    #create_genome_graph('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat_nohidden/winner2.pkl', filename="fs_neat.svg")
+    create_genome_graph('/Users/emilknudsen/Desktop/research/winner.pkl', filename="test")

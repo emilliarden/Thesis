@@ -179,3 +179,93 @@ def draw_net(config, genome, view=False, filename=None, node_names=None, show_di
     dot.render(filename, view=view)
 
     return dot
+
+
+def draw_net_without_all_nodes(config, genome, view=False, filename=None, node_names=None, show_disabled=True, prune_unused=False,
+             node_colors=None, fmt='svg'):
+    """ Receives a genome and draws a neural network with arbitrary topology. """
+    # Attributes for network nodes.
+    if graphviz is None:
+        warnings.warn("This display is not available due to a missing optional dependency (graphviz)")
+        return
+
+    # If requested, use a copy of the genome which omits all components that won't affect the output.
+    if prune_unused:
+        genome = genome.get_pruned_copy(config.genome_config)
+
+    if node_names is None:
+        node_names = {}
+
+    assert type(node_names) is dict
+
+    if node_colors is None:
+        node_colors = {}
+
+    assert type(node_colors) is dict
+
+    node_attrs = {
+        'shape': 'circle',
+        'fontsize': '9',
+        'height': '0.2',
+        'width': '0.2'}
+
+    dot = graphviz.Digraph(format=fmt, node_attr=node_attrs)
+
+    input_attrs = {'style': 'filled', 'shape': 'box', 'fillcolor':  'lightgray'}
+    #input_nodes_taking_output = [str(-148), str(-149), str(-150), str(-151)]
+
+    #for input_node in input_nodes_taking_output:
+    #    dot.node(input_node, _attributes=input_attrs)
+
+
+    already_drawn_nodes = set()
+
+    for cg in genome.connections.values():
+        if cg.enabled or show_disabled:
+            #if cg.input not in used_nodes or cg.output not in used_nodes:
+            #    continue
+            input, output = cg.key
+
+            if input not in already_drawn_nodes:
+                if input in config.genome_config.input_keys:
+                    input_attrs = {'style': 'filled', 'shape': 'box', 'fillcolor': node_colors.get(input, 'lightgray')}
+                    dot.node(str(input), _attributes=input_attrs)
+
+                elif input in config.genome_config.output_keys:
+                    node_attrs = {'style': 'filled', 'fillcolor': node_colors.get(input, 'lightblue')}
+                    dot.node(str(input), _attributes=node_attrs)
+                else:
+                    attrs = {'style': 'filled',
+                             'fillcolor': node_colors.get(input, 'white')}
+                    dot.node(str(input), _attributes=attrs)
+
+            if output not in already_drawn_nodes:
+                if output in config.genome_config.input_keys:
+                    input_attrs = {'style': 'filled', 'shape': 'box', 'fillcolor': node_colors.get(output, 'lightgray')}
+                    dot.node(str(output), _attributes=input_attrs)
+
+                elif output in config.genome_config.output_keys:
+                    node_attrs = {'style': 'filled', 'fillcolor': node_colors.get(output, 'lightblue')}
+                    dot.node(str(output), _attributes=node_attrs)
+                else:
+                    attrs = {'style': 'filled',
+                             'fillcolor': node_colors.get(output, 'white')}
+                    dot.node(str(output), _attributes=attrs)
+
+            already_drawn_nodes.add(input)
+            already_drawn_nodes.add(output)
+
+
+            style = 'solid' if cg.enabled else 'dotted'
+            color = 'green' if cg.weight > 0 else 'red'
+            width = str(0.1 + abs(cg.weight / 5.0))
+            dot.edge(str(input), str(output), _attributes={'style': style, 'color': color, 'penwidth': width})
+
+    #dot.edge(str(0), str(-148), _attributes={'style': 'solid', 'color': 'green', 'penwidth': str(1)})
+    #dot.edge(str(1), str(-149), _attributes={'style': 'solid', 'color': 'green', 'penwidth': str(1)})
+    #dot.edge(str(2), str(-150), _attributes={'style': 'solid', 'color': 'green', 'penwidth': str(1)})
+    #dot.edge(str(3), str(-151), _attributes={'style': 'solid', 'color': 'green', 'penwidth': str(1)})
+
+    dot.render(filename, view=view)
+
+    return dot

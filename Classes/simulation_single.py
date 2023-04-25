@@ -14,15 +14,28 @@ class SimulationSingle:
         self.constants = constants
         self.screen = Screen(self.constants)
         self.neat_population = neat_population
-        self.food_creater = FoodCreater(self.constants)
-        self.original_food = self.food_creater.get_food()
+        self.original_food = self.constants.FOOD_DICT
+        self.original_water = self.constants.WATER_DICT
+        self.water = dict.copy(self.original_water)
         self.food = dict.copy(self.original_food)
         self.population = None
         self.config = config
+        self.best_agents_fitness = -1
+        self.best_agents_fitness_last_gen = -1
+        self.best_agent_changed = False
 
     def create_population_from_genomes(self, genomes):
         agents = []
         genomes = sorted(genomes, key=lambda x: 0 if x[1].fitness is None else x[1].fitness, reverse=True)
+        self.best_agents_fitness_last_gen = 0 if genomes[0][1].fitness is None or all(ele[1].fitness == genomes[0][1].fitness for ele in genomes) else genomes[0][1].fitness
+        if self.best_agents_fitness_last_gen > self.best_agents_fitness:
+            self.best_agents_fitness = self.best_agents_fitness_last_gen
+            self.best_agent_changed = True
+        else:
+            self.best_agent_changed = False
+
+
+
         for i, (genome_id, genome) in enumerate(genomes):
             agent = Agent(genome=genome, constants=self.constants, config=self.config)
             agent.genome.fitness = 0
@@ -36,7 +49,8 @@ class SimulationSingle:
         self.population = self.create_population_from_genomes(genomes)
         for i, agent in enumerate(self.population):
             self.reset_gen()
-            while agent.timesteps_alive < self.constants.WORLD_SQUARES and len(self.food) > 0:
+            while agent.timesteps_alive < self.constants.WORLD_SQUARES + self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS and len(self.food) > 0 and not agent.out_of_bounds:
+            #while agent.energy > 0 and len(self.food) > 0 and not agent.out_of_bounds:
                 # TO QUIT PYGAME
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -49,22 +63,25 @@ class SimulationSingle:
                 if new_pos in self.food:
                     agent.timesteps_without_progress = 0
                     agent.genome.fitness += self.food[new_pos].energy
-                    agent.energy += 1
+                    if agent.energy < self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS:
+                        agent.energy += 1
+
                     self.food.pop(new_pos)
 
-                # if new_pos in agent.previous_positions.queue:
-                #     agent.genome.fitness -= 1
+                if new_pos in self.water:
+                    agent.out_of_bounds = True
 
                 # CHECK IF MOVE IS OUT OF BOUNDS
                 if (new_pos[0] > self.constants.WORLD_WIDTH or new_pos[0] < 0 or
                     new_pos[1] > self.constants.WORLD_HEIGHT or new_pos[1] < 0) or \
                         agent.energy < 1:
                     agent.out_of_bounds = True
-                    break
+
+
 
                 # DRAW
-                if self.constants.DRAW and i == 0:
-                    self.screen.update_display(agent, agent.timesteps_alive, self.food, [agent],
+                if self.constants.DRAW and i == 0 and (self.best_agent_changed or self.neat_population.generation % 100 == 0):
+                    self.screen.update_display(agent, agent.timesteps_alive, self.food, self.water, [agent],
                                                self.neat_population.generation)
 
                 # INCREMENT TIMESTEPS

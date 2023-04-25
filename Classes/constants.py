@@ -1,8 +1,9 @@
 from enum import Enum
+from Classes.food import FoodCreater, FoodDistribution
 
 class Constants:
     def __init__(self, sensing_mode, start_mode, food_distribution, start_type, draw):
-        self.SCALE_FACTOR = 20
+        self.SCALE_FACTOR = 40
         self.WORLD_HEIGHT = 800
         self.WORLD_WIDTH = 800
         self.WORLD_SQUARES = self.WORLD_WIDTH/self.SCALE_FACTOR*self.WORLD_HEIGHT/self.SCALE_FACTOR
@@ -13,18 +14,22 @@ class Constants:
         self.BACKGROUND_COLOR = (0, 0, 0)
         self.LINE_COLOR = (255, 255, 255)
         self.SENSING_DISTANCE = 3
-        self.START_POSITION = (self.WORLD_WIDTH/2, self.WORLD_HEIGHT/2)
+        self.START_POSITION = self.get_start_pos(food_distribution)
+        #self.START_POSITION = (0, 0)
         self.CONFIG_PATH = "config.txt"
         self.FILE_PREFIX = ""
         self.SENSING_MODE = sensing_mode
         self.START_MODE = start_mode
         self.START_TYPE = start_type
         self.FOOD_DISTRIBUTION = food_distribution
+        self.FOOD_CREATER = FoodCreater(food_distribution=food_distribution, start_position=self.START_POSITION, world_width=self.WORLD_WIDTH, world_height=self.WORLD_HEIGHT, scale_factor=self.SCALE_FACTOR, world_squares=self.WORLD_SQUARES)
+        self.FOOD_DICT, self.WATER_DICT = FoodCreater.get_food(self.FOOD_CREATER)
         self.DRAW = draw
         self.POPULATION_SIZE = 100 if self.START_TYPE == StartType.Single else 10
-        self.FITNESS_THRESH = self.get_fitness_threshold()
+        #self.FITNESS_THRESH = len(self.FOOD_DICT) if self.FOOD_DISTRIBUTION == FoodDistribution.Spiral else len(self.FOOD_DICT) * 0.9
+        self.FITNESS_THRESH = len(self.FOOD_DICT) * 0.9 if self.FOOD_DISTRIBUTION != FoodDistribution.Spiral and self.FOOD_DISTRIBUTION != FoodDistribution.SpiralWithWater and self.FOOD_DISTRIBUTION != FoodDistribution.Full else len(self.FOOD_DICT)
         self.NUM_INPUTS = self.get_number_of_inputs()
-        self.ALLOWED_MOVES_WITHOUT_PROGRESS = round(self.WORLD_SQUARES - self.FITNESS_THRESH)
+        self.ALLOWED_MOVES_WITHOUT_PROGRESS = max(round(self.WORLD_SQUARES - self.FITNESS_THRESH), self.WORLD_SQUARES * 0.1)
 
     def get_number_of_inputs(self):
         number_of_inputs = 0
@@ -44,23 +49,13 @@ class Constants:
 
         return number_of_inputs + 7
 
-    def get_fitness_threshold(self):
-        if self.FOOD_DISTRIBUTION == FoodDistribution.Full:
-            return self.WORLD_SQUARES - 1
-        elif self.FOOD_DISTRIBUTION == FoodDistribution.Unfull_80:
-            return self.WORLD_SQUARES * 0.8 * 0.9
-        elif self.FOOD_DISTRIBUTION == FoodDistribution.Unfull_60:
-            return self.WORLD_SQUARES * 0.6 * 0.9
-        elif self.FOOD_DISTRIBUTION == FoodDistribution.Unfull_40:
-            return self.WORLD_SQUARES * 0.4 * 0.9
-        elif self.FOOD_DISTRIBUTION == FoodDistribution.Unfull_20:
-            return self.WORLD_SQUARES * 0.2 * 0.9
-        elif self.FOOD_DISTRIBUTION == FoodDistribution.Clusters:
-            return self.WORLD_SQUARES * 0.5 * 0.9
-        elif self.FOOD_DISTRIBUTION == FoodDistribution.Corners:
-            return 10000000 * 0.9
-        elif self.FOOD_DISTRIBUTION == FoodDistribution.Spiral:
-            return 860
+    def get_start_pos(self, food_distribution):
+        food_distribution_with_start_pos_middle = [FoodDistribution.SpiralWithWater, FoodDistribution.Spiral,
+                                                   FoodDistribution.Cross, FoodDistribution.Corners]
+        if food_distribution in food_distribution_with_start_pos_middle:
+            return (self.WORLD_WIDTH/2, self.WORLD_HEIGHT/2)
+        else:
+            return (0, 0)
 
 
 
@@ -68,16 +63,7 @@ class Constants:
 
 
 
-class FoodDistribution(Enum):
-    Full = 1
-    Unfull_80 = 2
-    Unfull_60 = 3
-    Unfull_40 = 4
-    Unfull_20 = 5
-    Corners = 6
-    Clusters = 7
-    Circle = 8
-    Spiral = 9
+
 
 
 class StartMode(Enum):
@@ -100,8 +86,9 @@ class StartType(Enum):
 
 class ContentOfSquare(Enum):
     Food = 1
-    OtherRobot = 2
-    Empty = 3
-    OutsideArena = 4
+    Water = -1
+    Empty = 0
+    OutsideArena = -2
+    OtherRobot = -3
 
 

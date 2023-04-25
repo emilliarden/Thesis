@@ -12,12 +12,12 @@ from Classes.competition_agent import CompetitionAgent
 class SimulationCompetition:
     def __init__(self, constants, neat_population, config):
         pygame.init()
-        self.timestep = 0
         self.constants = constants
         self.screen = Screen(self.constants)
         self.neat_population = neat_population
-        self.food_creater = FoodCreater(self.constants)
-        self.original_food = self.food_creater.get_food()
+        self.original_food = self.constants.FOOD_DICT
+        self.original_water = self.constants.WATER_DICT
+        self.water = dict.copy(self.original_water)
         self.food = dict.copy(self.original_food)
         self.population = None
         self.config = config
@@ -83,7 +83,7 @@ class SimulationCompetition:
                 agent.energy -= 1
                 # DRAW
             if self.constants.DRAW and len(self.population) > 0:
-                self.screen.update_display(self.population[0], self.timestep, self.food, self.population,
+                self.screen.update_display(self.population[0], self.timestep, self.food, self.water, self.population,
                                            self.neat_population.generation)
 
     def eval_genomes_one_at_a_time(self, genomes, config):
