@@ -1,0 +1,57 @@
+Date : 2023-04-27 10:52:58
+Directory : /Users/emilknudsen/Desktop/research
+Total : 24 files,  6781 codes, 1113 comments, 395 blanks, all 8289 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| XML      |         11 |      5,409 |        979 |          6 |      6,394 |
+| Python   |         13 |      1,372 |        134 |        389 |      1,895 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                               | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                  |         24 |      6,781 |      1,113 |        395 |      8,289 |
+| . (Files)                                                                          |          1 |         51 |          6 |         22 |         79 |
+| .idea                                                                              |          5 |         32 |          0 |          0 |         32 |
+| .idea (Files)                                                                      |          4 |         26 |          0 |          0 |         26 |
+| .idea/inspectionProfiles                                                           |          1 |          6 |          0 |          0 |          6 |
+| Classes                                                                            |          9 |      1,011 |         95 |        245 |      1,351 |
+| Statistics                                                                         |          9 |      5,687 |      1,012 |        128 |      6,827 |
+| Statistics (Files)                                                                 |          4 |        504 |         73 |        123 |        700 |
+| Statistics/genome_graphs                                                           |          5 |      5,183 |        939 |          5 |      6,127 |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                           | language | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /Users/emilknudsen/Desktop/research/.idea/inspectionProfiles/profiles_settings.xml | XML      |          6 |          0 |          0 |          6 |
+| /Users/emilknudsen/Desktop/research/.idea/misc.xml                                 | XML      |          4 |          0 |          0 |          4 |
+| /Users/emilknudsen/Desktop/research/.idea/modules.xml                              | XML      |          8 |          0 |          0 |          8 |
+| /Users/emilknudsen/Desktop/research/.idea/research.iml                             | XML      |          8 |          0 |          0 |          8 |
+| /Users/emilknudsen/Desktop/research/.idea/vcs.xml                                  | XML      |          6 |          0 |          0 |          6 |
+| /Users/emilknudsen/Desktop/research/Classes/agent.py                               | Python   |        101 |         45 |         27 |        173 |
+| /Users/emilknudsen/Desktop/research/Classes/competition_agent.py                   | Python   |         94 |          4 |         22 |        120 |
+| /Users/emilknudsen/Desktop/research/Classes/constants.py                           | Python   |         74 |          8 |         25 |        107 |
+| /Users/emilknudsen/Desktop/research/Classes/food.py                                | Python   |        331 |          3 |         51 |        385 |
+| /Users/emilknudsen/Desktop/research/Classes/population_creator.py                  | Python   |         54 |          0 |         16 |         70 |
+| /Users/emilknudsen/Desktop/research/Classes/screen.py                              | Python   |        122 |         10 |         39 |        171 |
+| /Users/emilknudsen/Desktop/research/Classes/simulation_1v1.py                      | Python   |        101 |          7 |         26 |        134 |
+| /Users/emilknudsen/Desktop/research/Classes/simulation_competition.py              | Python   |         65 |         10 |         17 |         92 |
+| /Users/emilknudsen/Desktop/research/Classes/simulation_single.py                   | Python   |         69 |          8 |         22 |         99 |
+| /Users/emilknudsen/Desktop/research/Statistics/arena_visualizer.py                 | Python   |         13 |          0 |          4 |         17 |
+| /Users/emilknudsen/Desktop/research/Statistics/genome_graphs/base_case_fs_neat.svg | XML      |        174 |         36 |          1 |        211 |
+| /Users/emilknudsen/Desktop/research/Statistics/genome_graphs/base_case_full.svg    | XML      |      2,294 |        460 |          1 |      2,755 |
+| /Users/emilknudsen/Desktop/research/Statistics/genome_graphs/fs_neat.svg           | XML      |         41 |          0 |          1 |         42 |
+| /Users/emilknudsen/Desktop/research/Statistics/genome_graphs/full_direct.svg       | XML      |        465 |          0 |          1 |        466 |
+| /Users/emilknudsen/Desktop/research/Statistics/genome_graphs/full_new.svg          | XML      |      2,209 |        443 |          1 |      2,653 |
+| /Users/emilknudsen/Desktop/research/Statistics/graphplotter.py                     | Python   |        113 |         13 |         51 |        177 |
+| /Users/emilknudsen/Desktop/research/Statistics/test.svg                            | XML      |        194 |         40 |          1 |        235 |
+| /Users/emilknudsen/Desktop/research/Statistics/visualize.py                        | Python   |        184 |         20 |         67 |        271 |
+| /Users/emilknudsen/Desktop/research/main.py                                        | Python   |         51 |          6 |         22 |         79 |
+| Total                                                                              |          |      6,781 |      1,113 |        395 |      8,289 |
++------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

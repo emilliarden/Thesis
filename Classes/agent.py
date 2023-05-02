@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import neat
 import queue
@@ -29,7 +31,7 @@ class Agent:
 
     def get_rect(self):
         rect = pygame.Rect(self.x, self.y, self.size, self.size)
-        rect.center = (self.x, self.y)
+        #rect.center = (self.x, self.y)
         return rect
 
     def move(self, simulation):
@@ -48,12 +50,14 @@ class Agent:
 
         sensed.append(self.x/self.constants.WORLD_WIDTH)
         sensed.append(self.y/self.constants.WORLD_HEIGHT)
-        sensed.append(self.timesteps_without_progress / self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS)
+        sensed.append(self.energy / self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS)
 
         nn_output = self.nn.activate(sensed + self.last_nn_output)
         self.last_nn_output = nn_output
 
         nn_action = nn_output.index(max(nn_output))
+        #nn_action = random.randint(0, 4)
+
 
         if nn_action == 0:
             self.x -= self.constants.SCALE_FACTOR
@@ -64,7 +68,8 @@ class Agent:
         elif nn_action == 3:
             self.y += self.constants.SCALE_FACTOR
 
-        self.set_sensing_rects()
+        if self.constants.DRAW:
+            self.set_sensing_rects()
 
         return self.x, self.y
 

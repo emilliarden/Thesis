@@ -10,7 +10,6 @@ from Classes.constants import Constants
 
 class SimulationSingle:
     def __init__(self, constants, neat_population, config):
-        pygame.init()
         self.constants = constants
         self.screen = Screen(self.constants)
         self.neat_population = neat_population
@@ -49,7 +48,7 @@ class SimulationSingle:
         self.population = self.create_population_from_genomes(genomes)
         for i, agent in enumerate(self.population):
             self.reset_gen()
-            while agent.timesteps_alive < self.constants.WORLD_SQUARES + self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS and len(self.food) > 0 and not agent.out_of_bounds:
+            while agent.timesteps_alive < self.constants.WORLD_SQUARES and len(self.food) > 0 and not agent.out_of_bounds:
             #while agent.energy > 0 and len(self.food) > 0 and not agent.out_of_bounds:
                 # TO QUIT PYGAME
                 for event in pygame.event.get():
@@ -61,7 +60,6 @@ class SimulationSingle:
 
                 # CHECK IF MOVE GATHERS FOOD
                 if new_pos in self.food:
-                    agent.timesteps_without_progress = 0
                     agent.genome.fitness += self.food[new_pos].energy
                     if agent.energy < self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS:
                         agent.energy += 1
@@ -70,13 +68,14 @@ class SimulationSingle:
 
                 if new_pos in self.water:
                     agent.out_of_bounds = True
+                    continue
 
                 # CHECK IF MOVE IS OUT OF BOUNDS
-                if (new_pos[0] > self.constants.WORLD_WIDTH or new_pos[0] < 0 or
-                    new_pos[1] > self.constants.WORLD_HEIGHT or new_pos[1] < 0) or \
+                if (new_pos[0] >= self.constants.WORLD_WIDTH or new_pos[0] < 0 or
+                    new_pos[1] >= self.constants.WORLD_HEIGHT or new_pos[1] < 0) or \
                         agent.energy < 1:
                     agent.out_of_bounds = True
-
+                    continue
 
 
                 # DRAW
@@ -86,7 +85,6 @@ class SimulationSingle:
 
                 # INCREMENT TIMESTEPS
                 agent.timesteps_alive += 1
-                agent.timesteps_without_progress += 1
                 agent.energy -= 1
                 #agent.genome.fitness += 0.1
 

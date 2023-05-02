@@ -28,7 +28,7 @@ class CompetitionAgent:
 
     def get_rect(self):
         rect = pygame.Rect(self.x, self.y, self.size, self.size)
-        rect.center = (self.x, self.y)
+        #rect.center = (self.x, self.y)
         return rect
 
     def move(self, simulation):
@@ -43,7 +43,7 @@ class CompetitionAgent:
 
         sensed.append(self.x / self.constants.WORLD_WIDTH)
         sensed.append(self.y / self.constants.WORLD_HEIGHT)
-        sensed.append(self.timesteps_without_progress / self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS)
+        sensed.append(self.energy / self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS)
 
         nn_output = self.nn.activate(sensed + self.last_nn_output)
         self.last_nn_output = nn_output

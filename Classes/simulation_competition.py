@@ -49,9 +49,6 @@ class SimulationCompetition:
 
     # SIMULATION-----------------------------------------------------------------------------
                 # CHECK IF AGENT OUT OF BOUNDS
-                if agent.timesteps_without_progress > self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS:
-                    agent.out_of_bounds = True
-
                 if agent.out_of_bounds:
                     self.population.remove(agent)
                     continue
@@ -79,7 +76,6 @@ class SimulationCompetition:
                 # INCREMENT TIMESTEPS
                 agent.timesteps_alive += 1
                 agent.timesteps_without_progress += 1
-                #agent.genome.fitness += 0.1
                 agent.energy -= 1
                 # DRAW
             if self.constants.DRAW and len(self.population) > 0:
