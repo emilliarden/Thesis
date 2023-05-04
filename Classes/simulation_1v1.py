@@ -76,15 +76,17 @@ class SimulationIvI:
 
                     if new_pos in self.water:
                         a.out_of_bounds = True
+                        continue
 
                     # CHECK IF MOVE IS OUT OF BOUNDS
-                    if (new_pos[0] > self.constants.WORLD_WIDTH or new_pos[0] < 0 or
-                        new_pos[1] > self.constants.WORLD_HEIGHT or new_pos[1] < 0) or \
+                    if (new_pos[0] >= self.constants.WORLD_WIDTH or new_pos[0] < 0 or
+                        new_pos[1] >= self.constants.WORLD_HEIGHT or new_pos[1] < 0) or \
                             a.energy < 1:
                         a.out_of_bounds = True
+                        continue
 
                     # DRAW
-                    if self.constants.DRAW and len(IvI_pop) > 0 and self.neat_population.generation % 50 == 0:
+                    if self.constants.DRAW and len(IvI_pop) > 0 and self.neat_population.generation % 50 == 0 and self.neat_population.generation > 49:
                         self.screen.update_display(agent, self.timestep, self.food, self.water, IvI_pop,
                                                    self.neat_population.generation)
 
@@ -95,7 +97,7 @@ class SimulationIvI:
             if agent.genome.fitness > self.best_agent.genome.fitness:
                 agents_won_against_best.append(agent)
 
-            if self.constants.DRAW and self.neat_population.generation % 50 == 0:
+            if self.constants.DRAW and self.neat_population.generation % 50 == 0 and self.neat_population.generation > 49:
                 print('ROUND: ' + str(i))
                 if agent.genome.fitness > self.best_agent.genome.fitness:
                     print('New genome won!')

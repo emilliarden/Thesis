@@ -15,7 +15,7 @@ def compare_neat_with_full_fullarena():
     headers = ['Max']
 
     files_full = glob.glob("Full_Arena/full_direct/middle/*.csv")
-    files_neat = glob.glob("Full_Arena/fs_neat/middle/*.csv")
+    files_neat = glob.glob("Full_Arena/fs_neat/topleft/*.csv")
 
     column_names_full = []
     for i in range(1, len(files_full) + 1):
@@ -52,16 +52,16 @@ def compare_neat_with_full_fullarena():
 
     # random --------------------------------------------------------------
     random_df = pd.read_csv('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/fitness_history0.csv', names=headers, usecols=[0], sep=' ')
-
+    random_df = pd.concat([random_df, random_df], axis=0, ignore_index=True)
     #----------------------------------------------------------------------
     mean_frame = pd.concat([frame_neat['Mean'], frame_full['Mean'], random_df], axis=1, ignore_index=True)
-    mean_frame.columns = ['FS Neat', 'Full', 'Random']
-    ax = mean_frame.plot(title='Base case')
+    mean_frame.columns = ['FS_Neat', 'Fully Connected', 'Random']
+    ax = mean_frame.plot(title='Base case (start position = middle)')
     print(mean_frame)
 
     ax.set_xlabel("Generation")
     ax.set_ylabel("Fitness")
-    ax.axhline(y=396, color='purple', linestyle='--')
+    #ax.axhline(y=396, color='purple', linestyle='--')
     ax.axhline(y=440, color='purple', linestyle='--')
 
     plt.show()
@@ -72,8 +72,8 @@ def base_case_all_runs():
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [8.50, 3.50]
 
-    files_neat = glob.glob("Full_Arena/fs_neat/*.csv")
-    files_fullyconnected = glob.glob("Full_Arena/full_direct/*.csv")
+    files_neat = glob.glob("Full_Arena/fs_neat/middle/*.csv")
+    files_fullyconnected = glob.glob("Full_Arena/full_direct/middle/*.csv")
     file_random = glob.glob("Full_Arena/random_run/*.csv")
     shades_of_red = ['#ff0000', '#d70000', '#c60000', '#b70000', '#9b0000', '#ff0000', '#d70000', '#c60000', '#b70000', '#9b0000']
     shades_of_green = ['#22b600', '#26cc00', '#7be382', '#006400', '#009c1a', '#22b600', '#26cc00', '#7be382', '#006400', '#009c1a']
@@ -83,12 +83,12 @@ def base_case_all_runs():
     column_names = []
 
     for i in range(1, len(files_neat) + 1):
-        column_name = 'Neat ' + str(i)
+        column_name = 'FS_Neat ' + str(i)
         column_names.append(column_name)
         color_dict[column_name] = shades_of_green[i - 1]
 
     for i in range(1, len(files_fullyconnected) + 1):
-        column_name = 'Full ' + str(i)
+        column_name = 'Fully Connected ' + str(i)
         column_names.append(column_name)
         color_dict[column_name] = shades_of_red[i - 1]
 
@@ -104,11 +104,11 @@ def base_case_all_runs():
     frame = pd.concat(li, axis=1, ignore_index=True)
     frame.columns = column_names
 
-    ax = frame.plot(title='Max fitness base case', color=color_dict)
+    print(frame)
+    ax = frame.plot(title='Base case each run separately', color=color_dict)
     ax.set_xlabel("Generation")
     ax.set_ylabel("Fitness")
-    ax.axhline(y=1440, color='purple', linestyle='--')
-    ax.axhline(y=1600, color='purple', linestyle='--')
+    ax.axhline(y=440, color='purple', linestyle='--')
 
     # -----------------------------------------------------
     plt.show()
