@@ -14,7 +14,7 @@ def compare_neat_with_full_fullarena():
 
     headers = ['Max']
 
-    files_full = glob.glob("Full_Arena/full_direct/middle/*.csv")
+    files_full = glob.glob("Full_Arena/full_direct/topleft/*.csv")
     files_neat = glob.glob("Full_Arena/fs_neat/topleft/*.csv")
 
     column_names_full = []
@@ -51,12 +51,12 @@ def compare_neat_with_full_fullarena():
     #frame_neat['Mean'].mask(frame_neat['Mean'] >= 1440, np.nan, inplace=True)
 
     # random --------------------------------------------------------------
-    random_df = pd.read_csv('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/fitness_history0.csv', names=headers, usecols=[0], sep=' ')
-    random_df = pd.concat([random_df, random_df], axis=0, ignore_index=True)
+    random_df = pd.read_csv('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/fitness_history_random_topleft.csv', names=headers, usecols=[0], sep=' ')
+    #random_df = pd.concat([random_df, random_df], axis=0, ignore_index=True)
     #----------------------------------------------------------------------
     mean_frame = pd.concat([frame_neat['Mean'], frame_full['Mean'], random_df], axis=1, ignore_index=True)
     mean_frame.columns = ['FS_Neat', 'Fully Connected', 'Random']
-    ax = mean_frame.plot(title='Base case (start position = middle)')
+    ax = mean_frame.plot(title='Base case (start position = top left)')
     print(mean_frame)
 
     ax.set_xlabel("Generation")

@@ -10,6 +10,7 @@ class Screen:
         self.constants = constants
         self.screen = self.setup_screen()
         self.font = pygame.font.Font("freesansbold.ttf", 20)
+        self.bigger_font = pygame.font.Font("freesansbold.ttf", 32)
         self.clock = pygame.time.Clock()
 
 
@@ -64,6 +65,9 @@ class Screen:
 
     def draw_food(self, food):
         for f in food.items():
+            #food_img = pygame.image.load('/Users/emilknudsen/Desktop/research/gg.png').convert_alpha()
+            #food_img = pygame.transform.scale(food_img, (self.constants.SCALE_FACTOR, self.constants.SCALE_FACTOR))
+            #self.screen.blit(food_img, (f[1].get_rect().x, f[1].get_rect().y))
             # if f.energy < 40:
             #     pygame.draw.rect(self.screen, FOOD_COLOR, f.get_rect())
             # else:
@@ -162,13 +166,13 @@ class Screen:
                 self.constants.START_POSITION[0] - 7.5, self.constants.START_POSITION[1] - 7.5,
                 self.constants.SCALE_FACTOR + 15, self.constants.SCALE_FACTOR + 15), 2, border_radius=1)
 
-            text = self.font.render("Food: " + str(len(food)), True, self.constants.TEXT_COLOR)
+            text = self.bigger_font.render("Food: " + str(len(food)), True, self.constants.TEXT_COLOR2)
             text_rect = text.get_rect()
-            text_rect.bottomleft = 0, 20
+            text_rect.bottomleft = 0, 40
+
             self.screen.blit(text, text_rect)
 
             pygame.display.update()
-
 
         pygame.quit()
 
