@@ -64,7 +64,8 @@ class Constants:
         food_distributions_that_need_100 = [FoodDistribution.SpiralWithWater, FoodDistribution.Spiral,
                                             FoodDistribution.Cross, FoodDistribution.Corners,
                                             FoodDistribution.SpaceBetweenFood, FoodDistribution.HalfWaterHalfFood,
-                                            FoodDistribution.TwoEndsWaterMiddle, FoodDistribution.Full, FoodDistribution.Unfull_20]
+                                            FoodDistribution.TwoEndsWaterMiddle, FoodDistribution.Full, FoodDistribution.Unfull_20,
+                                            FoodDistribution.Unfull_60]
 
         if food_distribution in food_distributions_that_need_100:
             return 1
