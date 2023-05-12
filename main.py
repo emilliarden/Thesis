@@ -31,18 +31,16 @@ def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file=""):
         stats.save()
 
 
-
-
 def move_and_delete_files(filename):
     # Move winner Genome
     if os.path.exists("winner.pkl"):
         src_path = "winner.pkl"
-        dst_path = r"Statistics/Unfull_Arena/60_percent/New/winner" + str(filename) + ".pkl"
+        dst_path = r"Statistics/Full_Arena/fs_neat/middle/winner" + str(filename) + ".pkl"
         shutil.move(src_path, dst_path)
 
     # Move stats
     src_path = "fitness_history.csv"
-    dst_path = r"Statistics/Unfull_Arena/60_percent/New/fitness_history" + str(filename) + ".csv"
+    dst_path = r"Statistics/Full_Arena/fs_neat/middle/fitness_history" + str(filename) + ".csv"
     shutil.move(src_path, dst_path)
 
     # Remove unnecessary files
@@ -55,20 +53,20 @@ if __name__ == "__main__":
     start_mode = StartMode.New
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.Unfull_60
+    food_distribution = FoodDistribution.Full
     draw = True
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    #create_pop_and_find_winner(constants=constants, rounds_to_run=1000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle/winner7.pkl')
+    #create_pop_and_find_winner(constants=constants, rounds_to_run=1000, winner_file='/Users/emilknudsen/Desktop/research/winner.pkl')
     #exit(0)
     #counter = 0
 
     #for file in glob.glob("Statistics/Full_Arena/fs_neat/topleft/*.pkl"):
-    for i in range(5):
+    for i in range(19, 20):
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='')
+            create_pop_and_find_winner(constants=constants, rounds_to_run=1000, winner_file='')
         finally:
             move_and_delete_files(i)
         #counter += 1

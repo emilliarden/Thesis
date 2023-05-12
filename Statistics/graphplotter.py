@@ -173,4 +173,4 @@ if __name__ == "__main__":
     #compare_unfull_80()
     compare_neat_with_full_fullarena()
     #base_case_all_runs()
-    #create_genome_graph('/Users/emilknudsen/Desktop/research/winnerCross.pkl', filename="test")
+    create_genome_graph('/Users/emilknudsen/Desktop/research/winner.pkl', filename="test")
