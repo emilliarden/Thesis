@@ -6,7 +6,7 @@ if __name__ == "__main__":
     start_mode = None
     start_type = None
     sensing_mode = None
-    food_distribution = FoodDistribution.Unfull_20
+    food_distribution = FoodDistribution.TwoEndsWaterMiddle
     draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,

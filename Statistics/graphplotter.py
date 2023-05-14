@@ -14,8 +14,8 @@ def compare_neat_with_full_fullarena():
 
     headers = ['Max']
 
-    files_full = glob.glob("Full_Arena/full_direct/middle/*.csv")
-    files_neat = glob.glob("Full_Arena/fs_neat/middle/*.csv")
+    files_full = glob.glob("Function_Distribution/SpaceBetweenFood/New/*.csv")
+    files_neat = glob.glob("Function_Distribution/SpaceBetweenFood/TrainedOnFullMiddle/*.csv")
 
     column_names_full = []
     for i in range(1, len(files_full) + 1):
@@ -44,7 +44,6 @@ def compare_neat_with_full_fullarena():
 
 
     # fs_neat -----------------------------------------------------
-
     frame_neat = pd.concat(li_neat, axis=1, ignore_index=True)
     frame_neat.fillna(method='ffill', inplace=True)
     frame_neat['Mean'] = frame_neat.mean(axis=1)
@@ -54,15 +53,15 @@ def compare_neat_with_full_fullarena():
     random_df = pd.read_csv('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/fitness_history_random_middle.csv', names=headers, usecols=[0], sep=' ')
     random_df = pd.concat([random_df, random_df], axis=0, ignore_index=True)
     #----------------------------------------------------------------------
-    mean_frame = pd.concat([frame_neat['Mean'], frame_full['Mean'], random_df], axis=1, ignore_index=True)
-    mean_frame.columns = ['FS_Neat', 'Fully Connected', 'Random']
+    mean_frame = pd.concat([frame_neat['Mean'], frame_full['Mean']], axis=1, ignore_index=True)
+    mean_frame.columns = ['FS_Neat', 'Fully Connected']
     ax = mean_frame.plot(title='Base case (start position = middle)')
     print(mean_frame)
 
     ax.set_xlabel("Generation")
     ax.set_ylabel("Fitness")
     #ax.axhline(y=396, color='purple', linestyle='--')
-    ax.axhline(y=440, color='purple', linestyle='--')
+    ax.axhline(y=16, color='purple', linestyle='--')
 
     plt.show()
 
@@ -72,9 +71,9 @@ def base_case_all_runs():
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [8.50, 3.50]
 
-    files_neat = glob.glob("Full_Arena/fs_neat/middle/*.csv")
-    files_fullyconnected = glob.glob("Full_Arena/full_direct/middle/*.csv")
-    file_random = glob.glob("Full_Arena/random_run/*.csv")
+    files_neat = glob.glob("Function_Distribution/SpaceBetweenFood/New/*.csv")
+    files_fullyconnected = glob.glob("Function_Distribution/SpaceBetweenFood/TrainedOnFullMiddle/*.csv")
+    file_random = glob.glob("Full_Arena/random_run/fitness_history_random_middle.csv")
     shades_of_red = ['#ff0000', '#d70000', '#c60000', '#b70000', '#9b0000', '#ff0000', '#d70000', '#c60000', '#b70000', '#9b0000']
     shades_of_green = ['#22b600', '#26cc00', '#7be382', '#006400', '#009c1a', '#22b600', '#26cc00', '#7be382', '#006400', '#009c1a']
     random_color = '#22ff00'
@@ -108,7 +107,7 @@ def base_case_all_runs():
     ax = frame.plot(title='Base case each run separately', color=color_dict)
     ax.set_xlabel("Generation")
     ax.set_ylabel("Fitness")
-    ax.axhline(y=440, color='purple', linestyle='--')
+    ax.axhline(y=16, color='purple', linestyle='--')
 
     # -----------------------------------------------------
     plt.show()
@@ -171,6 +170,6 @@ def create_genome_graph(winner_file, filename):
 
 if __name__ == "__main__":
     #compare_unfull_80()
-    compare_neat_with_full_fullarena()
-    #base_case_all_runs()
-    create_genome_graph('/Users/emilknudsen/Desktop/research/winner.pkl', filename="test")
+    #compare_neat_with_full_fullarena()
+    base_case_all_runs()
+    #create_genome_graph('/Users/emilknudsen/Desktop/research/winner.pkl', filename="test")
