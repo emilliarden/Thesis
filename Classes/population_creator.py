@@ -36,7 +36,7 @@ def get_population_and_config_and_stats(constants, file_to_create_pop_from=""):
     neat_population.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     neat_population.add_reporter(stats)
-    neat_population.add_reporter(neat.Checkpointer(filename_prefix=constants.FILE_PREFIX, generation_interval=10))
+    neat_population.add_reporter(neat.Checkpointer(filename_prefix=constants.FILE_PREFIX, generation_interval=100))
 
     return neat_population, config, stats
 

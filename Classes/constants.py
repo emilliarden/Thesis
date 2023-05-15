@@ -53,19 +53,19 @@ class Constants:
     def get_start_pos(self, food_distribution):
         food_distribution_with_start_pos_middle = [FoodDistribution.SpiralWithWater, FoodDistribution.Spiral,
                                                    FoodDistribution.Cross, FoodDistribution.Corners,
-                                                   FoodDistribution.SpaceBetweenFood, FoodDistribution.CornersWithWater, FoodDistribution.Full]
+                                                   FoodDistribution.SpaceBetweenFood, FoodDistribution.CornersWithWater,
+                                                   ]
         if food_distribution in food_distribution_with_start_pos_middle:
             return (self.WORLD_WIDTH/2-self.SCALE_FACTOR/2, self.WORLD_HEIGHT/2-self.SCALE_FACTOR/2)
         else:
             return (0, 0)
-
 
     def get_fitness_threshold(self, food_distribution):
         food_distributions_that_need_100 = [FoodDistribution.SpiralWithWater, FoodDistribution.Spiral,
                                             FoodDistribution.Cross, FoodDistribution.Corners,
                                             FoodDistribution.SpaceBetweenFood, FoodDistribution.HalfWaterHalfFood,
                                             FoodDistribution.TwoEndsWaterMiddle, FoodDistribution.Full, FoodDistribution.Unfull_20,
-                                            FoodDistribution.Unfull_60]
+                                            FoodDistribution.Unfull_60, FoodDistribution.CornersWithWater, FoodDistribution.Unfull_80]
 
         if food_distribution in food_distributions_that_need_100:
             return 1
