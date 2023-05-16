@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import glob
 
 from Classes.constants import Constants
@@ -8,6 +9,18 @@ from Classes.food import FoodDistribution
 from visualize import draw_net, draw_net_without_all_nodes
 import neat
 import pickle
+
+
+def get_amount_of_lines_to_shift(filename):
+    number_to_look_for = 0
+    for i in filename:
+        if i.isdigit():
+            number_to_look_for = number_to_look_for * 10 + int(i)
+
+    pathToPreviousFile = '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle/fitness_history'+ str(number_to_look_for) + '.csv'
+    df = pd.read_csv(pathToPreviousFile, usecols=[0], sep=' ')
+    return len(df.index)
+
 
 def create_df_with_mean_and_stddev(folder):
     files = glob.glob(folder + "/*.csv")
@@ -60,55 +73,54 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
     # ---------------------------------------------------
     plt.xlabel("Generation", fontsize=18)
     plt.ylabel("Fitness", fontsize=16)
-    plt.title("", fontsize=16)
+    plt.title("Spiral", fontsize=16)
     plt.axhline(y=constants.FITNESS_THRESH, color='purple', linestyle='--', label='100% fitness')
     plt.legend(loc="center right")
     plt.show()
 
 
-def show_all_runs_two_folders(new_folder, pretrained_folder, random_folder, constants):
-    plt.rcParams["figure.autolayout"] = True
-    plt.rcParams["figure.figsize"] = [15.50, 7.50]
-
+def show_all_runs(new_folder, pretrained_folder, random_folder, constants):
     new_files = glob.glob(new_folder + "/*.csv")
     pretrained_files = glob.glob(pretrained_folder + "/*.csv")
     file_random = glob.glob(random_folder + "/*.csv")
-    shades_of_red = ['#ff0000', '#d70000', '#c60000', '#b70000', '#9b0000', '#ff0000', '#d70000', '#c60000', '#b70000', '#9b0000']
-    shades_of_green = ['#22b600', '#26cc00', '#7be382', '#006400', '#009c1a', '#22b600', '#26cc00', '#7be382', '#006400', '#009c1a']
-    random_color = '#0000FF'
 
-    color_dict = dict()
-    column_names = []
+    oranges = cm.get_cmap('Oranges')
+    blues = cm.get_cmap('Blues')
+    random_color = '#3F7F4C'
 
-    for i in range(1, len(new_files) + 1):
-        column_name = 'New ' + str(i)
-        column_names.append(column_name)
-        color_dict[column_name] = shades_of_green[i - 1]
-
-    for i in range(1, len(pretrained_files) + 1):
-        column_name = 'Pretrained ' + str(i)
-        column_names.append(column_name)
-        color_dict[column_name] = shades_of_red[i - 1]
-
-    column_name = 'Random'
-    column_names.append(column_name)
-    color_dict[column_name] = random_color
-
-    li = []
-    for filename in new_files + pretrained_files + file_random:
+    # insert random file into dataframe
+    for i, filename in enumerate(file_random):
         df = pd.read_csv(filename, usecols=[0], sep=' ')
-        li.append(df)
+        x = list(range(0, len(df)))
+        y = df
+        plt.plot(x, y, color=random_color, label='Random ' + str(i+1))
 
-    frame = pd.concat(li, axis=1, ignore_index=True)
-    frame.columns = column_names
+
+    #insert direct files into dataframe
+    for i, filename in enumerate(new_files):
+        df = pd.read_csv(filename, usecols=[0], sep=' ')
+        x = list(range(0, len(df)))
+        y = df
+        plt.plot(x, y, color=oranges(oranges.N-(20*i)), label='New ' + str(i + 1))
 
 
-    print(frame)
-    ax = frame.plot(title='', color=color_dict)
-    ax.set_xlabel("Generation")
-    ax.set_ylabel("Fitness")
-    ax.axhline(y=constants.FITNESS_THRESH, color='purple', linestyle='--', label='100% fitness')
-    # -----------------------------------------------------
+    # insert random file into dataframe
+    for i, filename in enumerate(pretrained_files):
+        df = pd.read_csv(filename, usecols=[0], sep=' ')
+        lines_to_shift = get_amount_of_lines_to_shift(filename)
+        x = list(range(lines_to_shift, lines_to_shift+len(df)))
+        y = df
+        plt.plot(x, y, color=blues(blues.N-(20*i)), label='Incremental ' + str(i + 1))
+
+
+    plt.rcParams["figure.autolayout"] = True
+    plt.rcParams["figure.figsize"] = [15.50, 7.50]
+
+    plt.xlabel("Generation", fontsize=18)
+    plt.ylabel("Fitness", fontsize=16)
+    plt.title("Spiral", fontsize=16)
+    plt.axhline(y=constants.FITNESS_THRESH, color='purple', linestyle='--', label='100% fitness')
+    plt.legend(loc="center right")
     plt.show()
 
 def create_genome_graph(winner_file, filename):
@@ -123,11 +135,11 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.HalfWaterHalfFood, None, None)
+    constants = Constants(None, None, FoodDistribution.Full, None, None)
 
-    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/New',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/TrainedOnFullTopLeft',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/Random',
+    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle',
+                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/full_direct/middle',
+                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/middle',
                      constants)
     #create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 

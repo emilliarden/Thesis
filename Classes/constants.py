@@ -12,7 +12,7 @@ class Constants:
         self.FOOD_COLOR = (124, 252, 0)
         self.FOOD2_COLOR = (195, 0, 195)
         self.TEXT_COLOR = (255, 165, 0)
-        self.TEXT_COLOR2 = (255,0,255)
+        self.TEXT_COLOR2 = (255, 0, 255)
         self.BACKGROUND_COLOR = (0, 0, 0)
         self.LINE_COLOR = (255, 255, 255)
         self.SENSING_DISTANCE = 3
