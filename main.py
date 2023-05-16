@@ -35,12 +35,12 @@ def move_and_delete_files(filename):
     # Move winner Genome
     if os.path.exists("winner.pkl"):
         src_path = "winner.pkl"
-        dst_path = r"Statistics/Function_Distribution/SpiralWithWater/TrainedOnFullTopleft/winner" + str(filename) + ".pkl"
+        dst_path = r"Statistics/Function_Distribution/TwoEndsPathMiddle/TrainedOnFullMiddle/winner" + str(filename) + ".pkl"
         shutil.move(src_path, dst_path)
 
     # Move stats
     src_path = "fitness_history.csv"
-    dst_path = r"Statistics/Function_Distribution/SpiralWithWater/TrainedOnFullTopleft/fitness_history" + str(filename) + ".csv"
+    dst_path = r"Statistics/Function_Distribution/TwoEndsPathMiddle/TrainedOnFullMiddle/fitness_history" + str(filename) + ".csv"
     shutil.move(src_path, dst_path)
 
     # Remove unnecessary files
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     start_mode = StartMode.Winner
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.Full
+    food_distribution = FoodDistribution.TwoEndsWaterMiddle
     draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
 
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=2000, winner_file=file)
+            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file=file)
         finally:
             move_and_delete_files(counter)
 

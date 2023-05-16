@@ -60,7 +60,7 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
     # ---------------------------------------------------
     plt.xlabel("Generation", fontsize=18)
     plt.ylabel("Fitness", fontsize=16)
-    plt.title("Spiral environment", fontsize=16)
+    plt.title("", fontsize=16)
     plt.axhline(y=constants.FITNESS_THRESH, color='purple', linestyle='--', label='100% fitness')
     plt.legend(loc="center right")
     plt.show()
@@ -123,11 +123,11 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.SpaceBetweenFood, None, None)
+    constants = Constants(None, None, FoodDistribution.HalfWaterHalfFood, None, None)
 
-    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/SpaceBetweenFood/New',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/SpaceBetweenFood/TrainedOnFullMiddle',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/SpaceBetweenFood/Random',
+    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/New',
+                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/TrainedOnFullTopLeft',
+                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/Random',
                      constants)
     #create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 
