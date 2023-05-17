@@ -54,7 +54,7 @@ if __name__ == "__main__":
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
     food_distribution = FoodDistribution.Full
-    draw = True
+    draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
