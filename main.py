@@ -35,12 +35,12 @@ def move_and_delete_files(filename):
     # Move winner Genome
     if os.path.exists("winner.pkl"):
         src_path = "winner.pkl"
-        dst_path = r"Statistics/Function_Distribution/HalfWaterHalfFood/TrainedOnFullAndSpaceBetween/winner" + str(filename) + ".pkl"
+        dst_path = r"Statistics/Function_Distribution/HalfFull/TrainedOnFullMiddle/winner" + str(filename) + ".pkl"
         shutil.move(src_path, dst_path)
 
     # Move stats
     src_path = "fitness_history.csv"
-    dst_path = r"Statistics/Function_Distribution/HalfWaterHalfFood/TrainedOnFullAndSpaceBetween/fitness_history" + str(filename) + ".csv"
+    dst_path = r"Statistics/Function_Distribution/HalfFull/TrainedOnFullMiddle/fitness_history" + str(filename) + ".csv"
     shutil.move(src_path, dst_path)
 
     # Remove unnecessary files
@@ -53,16 +53,16 @@ if __name__ == "__main__":
     start_mode = StartMode.Winner
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.HalfWaterHalfFood
+    food_distribution = FoodDistribution.HalfFull
     draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    #create_pop_and_find_winner(constants=constants, rounds_to_run=2000, winner_file='/Users/emilknudsen/Desktop/research/winner.pkl')
+    #create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfFull/New/winner0.pkl')
     #exit(0)
 
-    for file in glob.glob("Statistics/Function_Distribution/SpaceBetweenFood/TrainedOnFullMiddle/winner*.pkl"):
+    for file in glob.glob("Statistics/Full_Arena/fs_neat/middle/winner*.pkl"):
     #for i in range(10):
         file_length = len(file) - file.rfind('/')
         last_char_in_filename = len(file)-1
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
 
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file=file)
+            create_pop_and_find_winner(constants=constants, rounds_to_run=2000, winner_file=file)
         finally:
             move_and_delete_files(counter)
 

@@ -47,6 +47,9 @@ def create_df_with_mean_and_stddev(folder):
 
 
 def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
+
+    mean_finishing_point_for_successfull_runs = 559 #558,4
+
     new_dataframe = create_df_with_mean_and_stddev(new_folder)
     pretrained_dataframe = create_df_with_mean_and_stddev(pretrained_folder)
     random_dataframe = create_df_with_mean_and_stddev(random_folder)
@@ -54,17 +57,17 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
     data_frames = [new_dataframe, pretrained_dataframe, random_dataframe]
     #NEW, PRETRAINED, RANDOM COLORS:
     colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#3F7F4C', '#7EFF99')]
-    labels = ['Direct', 'Incremental', 'Random']
+    labels = ['Direct', 'Incremental (base case)', 'Random']
 
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
 
     for i, df in enumerate(data_frames):
-        x = list(range(0, len(df)))
+        x = list(range(0, len(df['Mean']))) if i == 0 or i == 2 else list(range(mean_finishing_point_for_successfull_runs, mean_finishing_point_for_successfull_runs + len(df['Mean'])))
         y = df['Mean']
         std_dev = df['Standard deviation']
 
-        plt.plot(x, df['Mean'], color=colors[i][0], label=labels[i])
+        plt.plot(x, y, color=colors[i][0], label=labels[i])
         plt.fill_between(x=x,
                          y1=y - std_dev,
                          y2=y + std_dev,
@@ -73,9 +76,9 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
     # ---------------------------------------------------
     plt.xlabel("Generation", fontsize=18)
     plt.ylabel("Fitness", fontsize=16)
-    plt.title("Spiral", fontsize=16)
+    plt.title("Spiral environment", fontsize=16)
     plt.axhline(y=constants.FITNESS_THRESH, color='purple', linestyle='--', label='100% fitness')
-    plt.legend(loc="center right")
+    plt.legend(loc="lower right")
     plt.show()
 
 
@@ -135,11 +138,11 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.Full, None, None)
+    constants = Constants(None, None, FoodDistribution.SpaceBetweenFood, None, None)
 
-    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/full_direct/middle',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/middle',
+    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/SpaceBetweenFood/New',
+                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/SpaceBetweenFood/TrainedOnFullMiddle',
+                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/SpaceBetweenFood/Random',
                      constants)
     #create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 

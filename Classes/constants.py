@@ -54,6 +54,7 @@ class Constants:
         food_distribution_with_start_pos_middle = [FoodDistribution.SpiralWithWater, FoodDistribution.Spiral,
                                                    FoodDistribution.Cross, FoodDistribution.Corners,
                                                    FoodDistribution.SpaceBetweenFood, FoodDistribution.CornersWithWater,
+                                                   FoodDistribution.Full, FoodDistribution.HalfFull
                                                    ]
         if food_distribution in food_distribution_with_start_pos_middle:
             return (self.WORLD_WIDTH/2-self.SCALE_FACTOR/2, self.WORLD_HEIGHT/2-self.SCALE_FACTOR/2)
@@ -65,7 +66,8 @@ class Constants:
                                             FoodDistribution.Cross, FoodDistribution.Corners,
                                             FoodDistribution.SpaceBetweenFood, FoodDistribution.HalfWaterHalfFood,
                                             FoodDistribution.TwoEndsWaterMiddle, FoodDistribution.Full, FoodDistribution.Unfull_20,
-                                            FoodDistribution.Unfull_60, FoodDistribution.CornersWithWater, FoodDistribution.Unfull_80]
+                                            FoodDistribution.Unfull_60, FoodDistribution.CornersWithWater, FoodDistribution.Unfull_80,
+                                            FoodDistribution.HalfFull]
 
         if food_distribution in food_distributions_that_need_100:
             return 1
