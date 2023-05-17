@@ -168,7 +168,7 @@ class Screen:
 
             text = self.bigger_font.render("Food: " + str(len(food)), True, self.constants.TEXT_COLOR2)
             text_rect = text.get_rect()
-            text_rect.bottomleft = 0, 40
+            text_rect.bottomleft = 300, 40
 
             self.screen.blit(text, text_rect)
 

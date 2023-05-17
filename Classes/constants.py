@@ -28,7 +28,7 @@ class Constants:
         self.FOOD_DICT, self.WATER_DICT = FoodCreater.get_food(self.FOOD_CREATER)
         self.DRAW = draw
         self.POPULATION_SIZE = 10 if self.START_TYPE == StartType.Competition else 100
-        self.FITNESS_THRESH = len(self.FOOD_DICT) * self.get_fitness_threshold(self.FOOD_DISTRIBUTION)
+        self.FITNESS_THRESH = len(self.FOOD_DICT) #* self.get_fitness_threshold(self.FOOD_DISTRIBUTION)
         self.NUM_INPUTS = self.get_number_of_inputs()
         self.ALLOWED_MOVES_WITHOUT_PROGRESS = max(round(self.WORLD_SQUARES - self.FITNESS_THRESH), round(self.WORLD_SQUARES * 0.1))
 
@@ -54,7 +54,7 @@ class Constants:
         food_distribution_with_start_pos_middle = [FoodDistribution.SpiralWithWater, FoodDistribution.Spiral,
                                                    FoodDistribution.Cross, FoodDistribution.Corners,
                                                    FoodDistribution.SpaceBetweenFood, FoodDistribution.CornersWithWater,
-                                                   FoodDistribution.Full, FoodDistribution.HalfFull
+                                                   FoodDistribution.Full,
                                                    ]
         if food_distribution in food_distribution_with_start_pos_middle:
             return (self.WORLD_WIDTH/2-self.SCALE_FACTOR/2, self.WORLD_HEIGHT/2-self.SCALE_FACTOR/2)

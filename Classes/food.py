@@ -28,6 +28,7 @@ class FoodDistribution(Enum):
     HalfFull = 20
     SpaceBetweenFood = 21
     TwoEndsWaterMiddle = 22
+    QuarterFull = 23
 
 
 class Food:
@@ -99,6 +100,8 @@ class FoodCreater:
             return self.space_between_food_arena()
         elif self.food_distribution == FoodDistribution.TwoEndsWaterMiddle:
             return self.two_ends_with_path_in_middle_arena()
+        elif self.food_distribution == FoodDistribution.QuarterFull:
+            return self.quarter_full_arena()
 
     def full_arena(self):
         water_dict = dict()
@@ -110,6 +113,15 @@ class FoodCreater:
         return food_dict, water_dict
 
     def half_full_arena(self):
+        water_dict = dict()
+        food_dict = dict()
+        for x in range(0, self.WORLD_WIDTH, self.SCALE_FACTOR*2):
+            for y in range(0, self.WORLD_HEIGHT, self.SCALE_FACTOR):
+                if (x, y) != self.START_POSITION:
+                    food_dict[(x, y)] = Food(x, y, 1, self.SCALE_FACTOR)
+        return food_dict, water_dict
+
+    def quarter_full_arena(self):
         water_dict = dict()
         food_dict = dict()
         for x in range(0, self.WORLD_WIDTH, self.SCALE_FACTOR*2):
