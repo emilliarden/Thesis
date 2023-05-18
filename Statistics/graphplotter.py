@@ -17,7 +17,7 @@ def get_amount_of_lines_to_shift(filename):
         if i.isdigit():
             number_to_look_for = number_to_look_for * 10 + int(i)
 
-    pathToPreviousFile = '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle/fitness_history' + str(
+    pathToPreviousFile = '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle_new_config/fitness_history' + str(
         number_to_look_for) + '.csv'
     df = pd.read_csv(pathToPreviousFile, usecols=[0], sep=' ')
     return len(df.index)
@@ -46,7 +46,10 @@ def create_df_with_mean_and_stddev(folder):
 
 
 def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, title):
-    #mean_finishing_point_for_successfull_runs = 559  # 558,4
+    #mean_finishing_point_for_successfull_runs = 559  # 558,4 for old_config middle full arena
+    mean_finishing_point_for_successfull_runs = 351  #351,2 for new_config middle full arena
+    mean_finishing_point_for_successfull_runs = 874  #874 for new_config trained on middle full and then half full
+
 
     new_dataframe = create_df_with_mean_and_stddev(new_folder)
     pretrained_dataframe = create_df_with_mean_and_stddev(pretrained_folder)
@@ -55,15 +58,15 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, ti
     data_frames = [new_dataframe, pretrained_dataframe, random_dataframe]
     # NEW, PRETRAINED, RANDOM COLORS:
     colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#3F7F4C', '#7EFF99')]
-    labels = ['Direct', 'Incremental (base case)', 'Random']
+    labels = ['Direct', 'Incremental', 'Random']
 
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
 
     for i, df in enumerate(data_frames):
-        x = list(range(0, len(df['Mean']))) #if i == 0 or i == 2 else list(
-            #range(mean_finishing_point_for_successfull_runs,
-                 # mean_finishing_point_for_successfull_runs + len(df['Mean'])))
+        x = list(range(0, len(df['Mean']))) if i == 0 or i == 2 else list(
+            range(mean_finishing_point_for_successfull_runs,
+                 mean_finishing_point_for_successfull_runs + len(df['Mean'])))
         y = df['Mean']
         std_dev = df['Standard deviation']
 
@@ -148,12 +151,12 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.Full, None, None)
+    constants = Constants(None, None, FoodDistribution.QuarterFull, None, None)
 
-    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle_new_config',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/full_direct/middle',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/middle',
-                     constants, 'Full')
+    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/New',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/TrainedOnFullAndHalfFull_new_config',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/topleft',
+                     constants, '25% Environment')
     # create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 
     # compare_neat_with_full_fullarena()
