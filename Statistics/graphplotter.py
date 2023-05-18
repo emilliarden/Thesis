@@ -20,7 +20,12 @@ def get_amount_of_lines_to_shift(filename):
     pathToPreviousFile = '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle_new_config/fitness_history' + str(
         number_to_look_for) + '.csv'
     df = pd.read_csv(pathToPreviousFile, usecols=[0], sep=' ')
-    return len(df.index)
+
+    pathToPreviousFile2 = '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfFull/TrainedOnFullMiddle_new_config/fitness_history' + str(
+        number_to_look_for) + '.csv'
+    df2 = pd.read_csv(pathToPreviousFile2, usecols=[0], sep=' ')
+
+    return len(df.index) + len(df2.index)
 
 
 def create_df_with_mean_and_stddev(folder):
@@ -46,9 +51,18 @@ def create_df_with_mean_and_stddev(folder):
 
 
 def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, title):
-    #mean_finishing_point_for_successfull_runs = 559  # 558,4 for old_config middle full arena
-    mean_finishing_point_for_successfull_runs = 351  #351,2 for new_config middle full arena
-    mean_finishing_point_for_successfull_runs = 874  #874 for new_config trained on middle full and then half full
+    #mean_finishing_for_middle_full_old_config = 559  # 558,4 for old_config middle full arena
+
+    #mean generation when trained on middle position in full arena
+    mean_finishing_point_for_full_new_config = 351  #351,2 for new_config middle full arena
+
+    #mean generation when pretrained on full to be able to complete half = 11
+    mean_finishing_point_for_full_then_half = mean_finishing_point_for_full_new_config + 11
+
+    #mean generation when pretrained on full, then half to be able to complete quarter = 294
+    mean_finishing_point_for_full_then_half_then_quarter = mean_finishing_point_for_full_then_half + 294
+
+    mean_finishing_point_for_successfull_runs = mean_finishing_point_for_full_then_half_then_quarter
 
 
     new_dataframe = create_df_with_mean_and_stddev(new_folder)
@@ -153,7 +167,7 @@ def create_genome_graph(winner_file, filename):
 if __name__ == "__main__":
     constants = Constants(None, None, FoodDistribution.QuarterFull, None, None)
 
-    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/New',
+    show_all_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/New',
                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/TrainedOnFullAndHalfFull_new_config',
                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/topleft',
                      constants, '25% Environment')
