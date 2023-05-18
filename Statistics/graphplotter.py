@@ -45,8 +45,8 @@ def create_df_with_mean_and_stddev(folder):
     return new_frame
 
 
-def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
-    mean_finishing_point_for_successfull_runs = 559  # 558,4
+def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, title):
+    #mean_finishing_point_for_successfull_runs = 559  # 558,4
 
     new_dataframe = create_df_with_mean_and_stddev(new_folder)
     pretrained_dataframe = create_df_with_mean_and_stddev(pretrained_folder)
@@ -61,9 +61,9 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
 
     for i, df in enumerate(data_frames):
-        x = list(range(0, len(df['Mean']))) if i == 0 or i == 2 else list(
-            range(mean_finishing_point_for_successfull_runs,
-                  mean_finishing_point_for_successfull_runs + len(df['Mean'])))
+        x = list(range(0, len(df['Mean']))) #if i == 0 or i == 2 else list(
+            #range(mean_finishing_point_for_successfull_runs,
+                 # mean_finishing_point_for_successfull_runs + len(df['Mean'])))
         y = df['Mean']
         std_dev = df['Standard deviation']
 
@@ -75,7 +75,6 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
                              alpha=0.5, edgecolor=colors[i][0], facecolor=colors[i][1])
 
     # ---------------------------------------------------
-    title = "50% Environment"
     plt.xlabel("Generation", fontsize=18)
     plt.ylabel("Fitness", fontsize=16)
     plt.title(title, fontsize=16)
@@ -88,7 +87,7 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants):
     plt.show()
 
 
-def show_all_runs(new_folder, pretrained_folder, random_folder, constants):
+def show_all_runs(new_folder, pretrained_folder, random_folder, constants, title):
     new_files = glob.glob(new_folder + "/*.csv")
     pretrained_files = glob.glob(pretrained_folder + "/*.csv")
     file_random = glob.glob(random_folder + "/*.csv")
@@ -122,7 +121,6 @@ def show_all_runs(new_folder, pretrained_folder, random_folder, constants):
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
 
-    title = "50% Environment"
 
     plt.xlabel("Generation", fontsize=18)
     plt.ylabel("Fitness", fontsize=16)
@@ -150,12 +148,12 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.HalfFull, None, None)
+    constants = Constants(None, None, FoodDistribution.Full, None, None)
 
-    show_all_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfFull/New',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfFull/TrainedOnFullMiddle',
-                     '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/SpaceBetweenFood/Random',
-                     constants)
+    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle_new_config',
+                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/full_direct/middle',
+                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/middle',
+                     constants, 'Full')
     # create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 
     # compare_neat_with_full_fullarena()
