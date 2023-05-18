@@ -165,12 +165,12 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.QuarterFull, None, None)
+    constants = Constants(None, None, FoodDistribution.Corners, None, None)
 
-    show_all_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/New',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/TrainedOnFullAndHalfFull_new_config',
+    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/Corners/New',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/Corners/TrainedOnFullHalfQuarter',
                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/topleft',
-                     constants, '25% Environment')
+                     constants, 'Corner clusters')
     # create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 
     # compare_neat_with_full_fullarena()
