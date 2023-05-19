@@ -53,7 +53,7 @@ if __name__ == "__main__":
     start_mode = StartMode.Winner
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.Cross
+    food_distribution = FoodDistribution.Unfull_80_Water
     draw = True
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,

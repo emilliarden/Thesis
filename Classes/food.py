@@ -231,7 +231,7 @@ class FoodCreater:
             y = round(random.randint(0, self.WORLD_HEIGHT) / self.SCALE_FACTOR) * self.SCALE_FACTOR
             if (x, y) not in food_dict:
                 food_dict[(x, y)] = Food(x, y, 1, self.SCALE_FACTOR)
-                for j in range(25):
+                for j in range(15):
                     dx = round(random.randint(-30, 30) / self.SCALE_FACTOR) * self.SCALE_FACTOR
                     dy = round(random.randint(-30, 30) / self.SCALE_FACTOR) * self.SCALE_FACTOR
                     while (x + dx, y + dy) in food_dict or x + dx < 0 or x + dx > 800 or y + dy < 0 or y + dy > 800:

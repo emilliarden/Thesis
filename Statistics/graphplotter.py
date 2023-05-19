@@ -25,7 +25,13 @@ def get_amount_of_lines_to_shift(filename):
         number_to_look_for) + '.csv'
     df2 = pd.read_csv(pathToPreviousFile2, usecols=[0], sep=' ')
 
-    return len(df.index) + len(df2.index)
+    pathToPreviousFile3 = '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/TrainedOnFullAndHalfFull_new_config/fitness_history' + str(
+        number_to_look_for) + '.csv'
+    df3 = pd.read_csv(pathToPreviousFile3, usecols=[0], sep=' ')
+
+
+
+    return len(df.index) + len(df2.index) + len(df3.index)
 
 
 def create_df_with_mean_and_stddev(folder):
@@ -165,12 +171,12 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.QuarterFull, None, None)
+    constants = Constants(None, None, FoodDistribution.Corners, None, None)
 
-    show_all_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/New',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/TrainedOnFullAndHalfFull_new_config',
+    show_all_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/Corners/New',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/Corners/TrainedOnFullHalfQuarter',
                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/topleft',
-                     constants, '25% Environment all runs')
+                     constants, 'Corner Clusters all runs')
     # create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 
     # compare_neat_with_full_fullarena()
