@@ -143,7 +143,7 @@ class FoodCreater:
         return food_dict, water_dict
 
     def unfull_arena_water(self, percentage):
-        random.seed(2)
+        random.seed(42)
         water_dict = dict()
         food_dict = dict()
         while len(food_dict) < self.WORLD_SQUARES * percentage:
