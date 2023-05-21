@@ -126,12 +126,6 @@ def show_all_runs(new_folder, pretrained_folder, random_folder, constants, title
     #     y = df
     #     plt.plot(x, y, color=random_color, label='Random ' + str(i + 1))
 
-    # insert direct files into dataframe
-    for i, filename in enumerate(new_files):
-        df = pd.read_csv(filename, usecols=[0], sep=' ')
-        x = list(range(0, len(df)))
-        y = df
-        plt.plot(x, y, color=oranges(oranges.N - (20 * i)), label='Direct ' + str(i + 1))
 
     # insert random file into dataframe
     for i, filename in enumerate(pretrained_files):
@@ -140,6 +134,13 @@ def show_all_runs(new_folder, pretrained_folder, random_folder, constants, title
         x = list(range(lines_to_shift, lines_to_shift + len(df)))
         y = df
         plt.plot(x, y, color=blues(blues.N - (20 * i)), label='Incremental ' + str(i + 1))
+
+        # insert direct files into dataframe
+    for i, filename in enumerate(new_files):
+        df = pd.read_csv(filename, usecols=[0], sep=' ')
+        x = list(range(0, len(df)))
+        y = df
+        plt.plot(x, y, color=oranges(oranges.N - (20 * i)), label='Direct ' + str(i + 1))
 
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
@@ -171,12 +172,12 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.Corners, None, None)
+    constants = Constants(None, None, FoodDistribution.HalfWaterHalfFood, None, None)
 
-    show_all_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/Corners/New',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/Corners/TrainedOnFullHalfQuarter',
+    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/New_new_config',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/TrainedOnQuarterFull',
                     '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/topleft',
-                     constants, 'Corner Clusters all runs')
+                     constants, 'Striped environment')
     # create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 
     # compare_neat_with_full_fullarena()

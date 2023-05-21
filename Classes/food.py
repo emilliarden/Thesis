@@ -29,6 +29,8 @@ class FoodDistribution(Enum):
     SpaceBetweenFood = 21
     TwoEndsWaterMiddle = 22
     QuarterFull = 23
+    Complex1 = 24
+    Unfull_15 = 25
 
 
 class Food:
@@ -75,6 +77,8 @@ class FoodCreater:
             return self.unfull_arena_water(0.4)
         elif self.food_distribution == FoodDistribution.Unfull_20_Water:
             return self.unfull_arena_water(0.2)
+        elif self.food_distribution == FoodDistribution.Unfull_15:
+            return self.unfull_arena(0.15)
 
         elif self.food_distribution == FoodDistribution.Clusters:
             return self.clusters_arena()
@@ -102,6 +106,50 @@ class FoodCreater:
             return self.two_ends_with_path_in_middle_arena()
         elif self.food_distribution == FoodDistribution.QuarterFull:
             return self.quarter_full_arena()
+        elif self.food_distribution == FoodDistribution.Complex1:
+            return self.complex1_arena()
+
+
+    def complex1_arena(self):
+        random.seed(42)
+        amount_per_corner = 10
+        water_dict = dict()
+        food_dict = dict()
+        topleft = [(round(random.randint(0, self.WORLD_WIDTH * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR,
+                    round(random.randint(0, self.WORLD_HEIGHT * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for
+                   _ in
+                   range(amount_per_corner)]
+        topright = [(round(
+            random.randint(self.WORLD_WIDTH * 0.75, self.WORLD_WIDTH) / self.SCALE_FACTOR) * self.SCALE_FACTOR,
+                     round(random.randint(0, self.WORLD_HEIGHT * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for
+                    _
+                    in range(amount_per_corner)]
+        bottomleft = [
+            (round(random.randint(0, self.WORLD_WIDTH * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR, round(
+                random.randint(self.WORLD_HEIGHT * 0.75,
+                               self.WORLD_HEIGHT) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for _
+            in range(amount_per_corner)]
+        bottomright = [(round(
+            random.randint(self.WORLD_WIDTH * 0.75, self.WORLD_WIDTH) / self.SCALE_FACTOR) * self.SCALE_FACTOR,
+                        round(
+                            random.randint(self.WORLD_HEIGHT * 0.75,
+                                           self.WORLD_HEIGHT) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for _
+                       in range(amount_per_corner)]
+
+        for (x, y) in topleft + topright + bottomleft + bottomright:
+            food_dict[(x, y)] = Food(x, y, 1, self.SCALE_FACTOR)
+
+        for (x, y) in food_dict.keys():
+            surrounding_squares = self.get_surrounding_coordinates((x, y))
+            surrounding_squares.pop(random.randint(0, len(surrounding_squares) - 1))
+            surrounding_squares.pop(random.randint(0, len(surrounding_squares) - 1))
+            surrounding_squares.pop(random.randint(0, len(surrounding_squares) - 1))
+            surrounding_squares.pop(random.randint(0, len(surrounding_squares) - 1))
+
+            for (sx, sy) in surrounding_squares:
+                water_dict[(sx, sy)] = 1
+
+        return food_dict, water_dict
 
     def full_arena(self):
         water_dict = dict()
@@ -154,16 +202,21 @@ class FoodCreater:
 
         for x in range(0, self.WORLD_WIDTH, self.SCALE_FACTOR):
             for y in range(0, self.WORLD_HEIGHT, self.SCALE_FACTOR):
-                if (x, y) in food_dict or (x, y) == self.START_POSITION:
+                if (x, y) in food_dict or (x, y) == self.START_POSITION \
+                        or x == self.START_POSITION[0] + self.SCALE_FACTOR:
                     continue
                 else:
-                    water_dict[(x, y)] = 1
+                    chance_of_water = 0.3
+                    r = random.random()
+                    if r < chance_of_water:
+                        water_dict[(x, y)] = 1
 
+        water_dict.pop((440, 720))
         return food_dict, water_dict
 
     def corners_arena_with_water(self):
         random.seed(42)
-        amount_per_corner = 3
+        amount_per_corner = 10
         water_dict = dict()
         food_dict = dict()
         topleft = [(round(random.randint(0, self.WORLD_WIDTH * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR,
