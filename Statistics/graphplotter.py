@@ -108,8 +108,8 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, ti
     plt.legend(loc="lower right")
     figure = plt.gcf()  # get current figure
     figure.set_size_inches(14, 8)
-    plt.savefig("Environment_graphs/" + title + ".svg")
-    plt.savefig("Environment_graphs/" + title + ".png")
+    plt.savefig("Graphs/" + title + ".svg")
+    plt.savefig("Graphs/" + title + ".png")
     plt.show()
 
 
@@ -156,8 +156,8 @@ def show_all_runs(new_folder, pretrained_folder, random_folder, constants, title
     plt.legend(loc="lower right")
     figure = plt.gcf()  # get current figure
     figure.set_size_inches(14, 8)
-    plt.savefig("Environment_graphs/" + title + ".svg")
-    plt.savefig("Environment_graphs/" + title + ".png")
+    plt.savefig("Graphs/" + title + ".svg")
+    plt.savefig("Graphs/" + title + ".png")
     plt.show()
 
 
@@ -177,10 +177,10 @@ def create_genome_graph(winner_file, filename):
 if __name__ == "__main__":
     constants = Constants(None, None, FoodDistribution.HalfWaterHalfFood, None, None)
 
-    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/New_new_config',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfWaterHalfFood/TrainedOnQuarterFull',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/random_run/topleft',
-                     constants, 'Striped environment')
+    show_all_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Direct',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/Cross/TrainedOnFullHalfQuarter',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Random',
+                     constants, 'Cross environment')
     # create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 
     # compare_neat_with_full_fullarena()

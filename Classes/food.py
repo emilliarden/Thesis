@@ -30,7 +30,9 @@ class FoodDistribution(Enum):
     TwoEndsWaterMiddle = 22
     QuarterFull = 23
     Complex1 = 24
-    Unfull_15 = 25
+    Unfull_25 = 25
+    SpiralWithWater2 = 26
+
 
 
 class Food:
@@ -77,8 +79,8 @@ class FoodCreater:
             return self.unfull_arena_water(0.4)
         elif self.food_distribution == FoodDistribution.Unfull_20_Water:
             return self.unfull_arena_water(0.2)
-        elif self.food_distribution == FoodDistribution.Unfull_15:
-            return self.unfull_arena(0.15)
+        elif self.food_distribution == FoodDistribution.Unfull_25:
+            return self.unfull_arena(0.25)
 
         elif self.food_distribution == FoodDistribution.Clusters:
             return self.clusters_arena()
@@ -108,6 +110,8 @@ class FoodCreater:
             return self.quarter_full_arena()
         elif self.food_distribution == FoodDistribution.Complex1:
             return self.complex1_arena()
+        elif self.food_distribution == FoodDistribution.SpiralWithWater2:
+            return self.spiral_arena2(water=True)
 
 
     def complex1_arena(self):
@@ -317,6 +321,39 @@ class FoodCreater:
             for x in range(0, self.WORLD_WIDTH, self.SCALE_FACTOR):
                 for y in range(0, self.WORLD_HEIGHT, self.SCALE_FACTOR):
                     if (x, y) in food_dict or (x, y) == self.START_POSITION:
+                        continue
+                    else:
+                        water_dict[(x, y)] = 1
+
+        return food_dict, water_dict
+
+    def spiral_arena2(self, water):
+        directions = [(1, 0), (0, -1), (-1, 0), (0, 1)]
+        number_of_points_in_direction = 1
+        water_dict = dict()
+        food_dict = dict()
+        empty_dict = dict()
+        x, y = self.START_POSITION
+        counter = 0
+        run = True
+        while run:
+            for i in range(1, number_of_points_in_direction + 1):
+                x = x + (directions[(number_of_points_in_direction - 1) % 4][0] * self.SCALE_FACTOR)
+                y = y + (directions[(number_of_points_in_direction - 1) % 4][1] * self.SCALE_FACTOR)
+                if x >= self.WORLD_WIDTH or x < 0 or y >= self.WORLD_HEIGHT or y < 0:
+                    run = False
+                    continue
+                if i % 3 == 0:
+                    food_dict[(x, y)] = Food(x, y, 1, self.SCALE_FACTOR)
+                else:
+                    empty_dict[(x, y)] = 1
+            number_of_points_in_direction += 1
+            #counter += 1
+
+        if water:
+            for x in range(0, self.WORLD_WIDTH, self.SCALE_FACTOR):
+                for y in range(0, self.WORLD_HEIGHT, self.SCALE_FACTOR):
+                    if (x, y) in food_dict or (x, y) in empty_dict or (x, y) == self.START_POSITION:
                         continue
                     else:
                         water_dict[(x, y)] = 1
