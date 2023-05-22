@@ -59,6 +59,9 @@ def create_df_with_mean_and_stddev(folder):
 def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, title):
     #mean_finishing_for_middle_full_old_config = 559  # 558,4 for old_config middle full arena
 
+    #mean finishing for topleft_full
+    mean_finishing_point_for_full_new_config_topleft = 0
+
     #mean generation when trained on middle position in full arena
     mean_finishing_point_for_full_new_config = 351  #351,2 for new_config middle full arena
 

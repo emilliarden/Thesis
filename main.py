@@ -73,7 +73,7 @@ if __name__ == "__main__":
         #    counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
 
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='')
+            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='')
         finally:
             move_and_delete_files(i)
 

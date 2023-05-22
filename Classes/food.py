@@ -195,8 +195,8 @@ class FoodCreater:
         water_dict = dict()
         food_dict = dict()
         while len(food_dict) < self.WORLD_SQUARES * percentage:
-            x = round(random.randint(0, self.WORLD_WIDTH) / self.SCALE_FACTOR) * self.SCALE_FACTOR
-            y = round(random.randint(0, self.WORLD_HEIGHT) / self.SCALE_FACTOR) * self.SCALE_FACTOR
+            x = round(random.randint(0, self.WORLD_WIDTH-self.SCALE_FACTOR) / self.SCALE_FACTOR) * self.SCALE_FACTOR
+            y = round(random.randint(0, self.WORLD_HEIGHT-self.SCALE_FACTOR) / self.SCALE_FACTOR) * self.SCALE_FACTOR
             if (x, y) != self.START_POSITION:
                 food_dict[(x, y)] = Food(x, y, 1, self.SCALE_FACTOR)
 
@@ -211,7 +211,7 @@ class FoodCreater:
                     if r < chance_of_water:
                         water_dict[(x, y)] = 1
 
-        water_dict.pop((440, 720))
+        #water_dict.pop((440, 720))
         return food_dict, water_dict
 
     def corners_arena_with_water(self):
