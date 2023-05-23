@@ -17,21 +17,21 @@ def get_amount_of_lines_to_shift(filename):
         if i.isdigit():
             number_to_look_for = number_to_look_for * 10 + int(i)
 
-    pathToPreviousFile = '/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/middle_new_config/fitness_history' + str(
+    pathToPreviousFile = '/Users/emilknudsen/Desktop/research/Statistics/Runs/Base_Case/fs_neat/middle_new_config/fitness_history' + str(
         number_to_look_for) + '.csv'
     df = pd.read_csv(pathToPreviousFile, usecols=[0], sep=' ')
 
-    pathToPreviousFile2 = '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/HalfFull/TrainedOnFullMiddle_new_config/fitness_history' + str(
+    pathToPreviousFile2 = '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/HalfFull/TrainedOnFullMiddle_new_config/fitness_history' + str(
         number_to_look_for) + '.csv'
     df2 = pd.read_csv(pathToPreviousFile2, usecols=[0], sep=' ')
 
-    pathToPreviousFile3 = '/Users/emilknudsen/Desktop/research/Statistics/Function_Distribution/QuarterFull/TrainedOnFullAndHalfFull_new_config/fitness_history' + str(
-        number_to_look_for) + '.csv'
-    df3 = pd.read_csv(pathToPreviousFile3, usecols=[0], sep=' ')
+    #pathToPreviousFile3 = '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/TrainedOnFullHalf/fitness_history' + str(
+        #number_to_look_for) + '.csv'
+    #df3 = pd.read_csv(pathToPreviousFile3, usecols=[0], sep=' ')
 
 
 
-    return len(df.index) + len(df2.index) + len(df3.index)
+    return len(df.index) + len(df2.index)# + len(df3.index)
 
 
 def create_df_with_mean_and_stddev(folder):
@@ -71,7 +71,7 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, ti
     #mean generation when pretrained on full, then half to be able to complete quarter = 294
     mean_finishing_point_for_full_then_half_then_quarter = mean_finishing_point_for_full_then_half + 294
 
-    mean_finishing_point_for_successfull_runs = mean_finishing_point_for_full_then_half_then_quarter
+    mean_finishing_point_for_successfull_runs = mean_finishing_point_for_full_then_half
 
 
     new_dataframe = create_df_with_mean_and_stddev(new_folder)
@@ -89,9 +89,10 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, ti
     for i, df in enumerate(data_frames):
         x = list(range(0, len(df['Mean']))) if i == 0 or i == 2 else list(
             range(mean_finishing_point_for_successfull_runs,
-                 mean_finishing_point_for_successfull_runs + len(df['Mean'])))
-        y = df['Mean']
-        std_dev = df['Standard deviation']
+                  len(df['Mean'])+mean_finishing_point_for_successfull_runs))
+        y = df['Mean'] if i == 0 or i == 2 else df['Mean'].head(len(df['Mean']))
+        std_dev = df['Standard deviation'] if i == 0 or i == 2 else df['Standard deviation'].head(len(df['Standard deviation']))
+
 
         if i != 2:
             plt.plot(x, y, color=colors[i][0], label=labels[i])
@@ -130,12 +131,12 @@ def show_all_runs(new_folder, pretrained_folder, random_folder, constants, title
     #     plt.plot(x, y, color=random_color, label='Random ' + str(i + 1))
 
 
-    # insert random file into dataframe
+    # insert pretrained file into dataframe
     for i, filename in enumerate(pretrained_files):
         df = pd.read_csv(filename, usecols=[0], sep=' ')
         lines_to_shift = get_amount_of_lines_to_shift(filename)
-        x = list(range(lines_to_shift, lines_to_shift + len(df)))
-        y = df
+        x = list(range(lines_to_shift, len(df)+lines_to_shift))
+        y = df.head(len(df))
         plt.plot(x, y, color=blues(blues.N - (20 * i)), label='Incremental ' + str(i + 1))
 
         # insert direct files into dataframe
@@ -175,12 +176,12 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.HalfWaterHalfFood, None, None)
+    constants = Constants(None, None, FoodDistribution.Unfull_25, None, None)
 
-    show_all_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Direct',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/Cross/TrainedOnFullHalfQuarter',
+    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/Direct',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/TrainedOnFullHalf',
                     '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Random',
-                     constants, 'Cross environment')
+                     constants, '25%  Distributed All Runs')
     # create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
 
     # compare_neat_with_full_fullarena()

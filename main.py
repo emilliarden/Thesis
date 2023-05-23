@@ -54,13 +54,13 @@ if __name__ == "__main__":
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
     food_distribution = FoodDistribution.Unfull_25
-    draw = False
+    draw = True
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    #create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/WellTrained2.pkl')
-    #exit(0)
+    create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/Corners/TrainedOnFullHalfQuarter')
+    exit(0)
 
     for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/TrainedOnFullAndHalfFull_new_config/winner*.pkl"):
     #for i in range(10):

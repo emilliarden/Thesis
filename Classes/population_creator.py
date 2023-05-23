@@ -1,3 +1,5 @@
+import glob
+
 import neat
 import pickle
 from itertools import count
@@ -44,7 +46,7 @@ def get_population_and_config_and_stats(constants, file_to_create_pop_from=""):
 def create_pop_from_pkl(config, pkl_path):
     print(f"Load the last best network!")
     p = neat.Population(config, initial_state=(0, 0, 0))
-    population = create_pop(config, pkl_path)
+    population = create_pop_multiple_genomes(config, pkl_path)
     species = config.species_set_type(config.species_set_config, p.reporters)
     generation = 0
     species.speciate(config, population, generation)
@@ -66,4 +68,20 @@ def create_pop(config, pkl_path):
         tmp_genome = deepcopy(genome)
         tmp_genome.key = key
         new_genomes[key] = tmp_genome
+    return new_genomes
+
+
+def create_pop_multiple_genomes(config, folder_path):
+    genome_indexer = count(1)
+    new_genomes = {}
+
+    for file in glob.glob(folder_path + '/winner*.pkl'):
+        with open(file, "rb") as f:
+            genome = pickle.load(f)
+        for i in range(10):
+            key = next(genome_indexer)
+            tmp_genome = deepcopy(genome)
+            tmp_genome.key = key
+            new_genomes[key] = tmp_genome
+
     return new_genomes
