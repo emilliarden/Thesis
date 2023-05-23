@@ -109,4 +109,3 @@ class ContentOfSquare(Enum):
     OutsideArena = -2
     OtherRobot = -3
 
-
