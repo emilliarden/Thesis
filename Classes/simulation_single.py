@@ -62,7 +62,7 @@ class SimulationSingle:
                 if new_pos in self.food:
                     agent.genome.fitness += self.food[new_pos].energy
                     if agent.energy < self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS:
-                        agent.energy += 1
+                        agent.energy += 2
                     self.food.pop(new_pos)
 
                 if new_pos in self.water:

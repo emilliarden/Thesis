@@ -35,12 +35,12 @@ def move_and_delete_files(filename):
     # Move winner Genome
     if os.path.exists("winner.pkl"):
         src_path = "winner.pkl"
-        dst_path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/Multi-Full-HalfFull-Quarter/winner" + str(filename) + ".pkl"
+        dst_path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFullHalfQuarter2x/winner" + str(filename) + ".pkl"
         shutil.move(src_path, dst_path)
 
     # Move stats
     src_path = "fitness_history.csv"
-    dst_path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/Multi-Full-HalfFull-Quarter/fitness_history" + str(filename) + ".csv"
+    dst_path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFullHalfQuarter2x/fitness_history" + str(filename) + ".csv"
     shutil.move(src_path, dst_path)
 
     # Remove unnecessary files
@@ -53,8 +53,8 @@ if __name__ == "__main__":
     start_mode = StartMode.Winner
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.QuarterFull
-    draw = True
+    food_distribution = FoodDistribution.HalfWaterHalfFood
+    draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
@@ -62,20 +62,19 @@ if __name__ == "__main__":
     #create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Base_Case/fs_neat/topleft_new_config')
     #exit(0)
 
-    #for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/TrainedOnFullAndHalfFull_new_config/winner*.pkl"):
-    for i in range(8):
+    for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/Random_QuarterFull/TrainedOnFullHalfQuarter/winner*.pkl"):
+    #for i in range(8):
 
-        # file_length = len(file) - file.rfind('/')
-        # last_char_in_filename = len(file)-1
-        #
-        # if file_length == 12:
-        #     counter = file[last_char_in_filename-4]
-        # else:
-        #     counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
+        file_length = len(file) - file.rfind('/')
+        last_char_in_filename = len(file)-1
+        if file_length == 12:
+             counter = file[last_char_in_filename-4]
+        else:
+            counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=1000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/HalfFull/Multi-Full-HalfFull')
+            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file=file)
         finally:
-            move_and_delete_files(i)
+            move_and_delete_files(counter)
 
 
 

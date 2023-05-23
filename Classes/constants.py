@@ -30,7 +30,7 @@ class Constants:
         self.POPULATION_SIZE = 10 if self.START_TYPE == StartType.Competition else 100
         self.FITNESS_THRESH = len(self.FOOD_DICT) #* self.get_fitness_threshold(self.FOOD_DISTRIBUTION)
         self.NUM_INPUTS = self.get_number_of_inputs()
-        self.ALLOWED_MOVES_WITHOUT_PROGRESS = max(round(self.WORLD_SQUARES - self.FITNESS_THRESH), round(self.WORLD_SQUARES * 0.1))
+        self.ALLOWED_MOVES_WITHOUT_PROGRESS = min(round(self.WORLD_SQUARES - self.FITNESS_THRESH-len(self.WATER_DICT)), round(self.WORLD_SQUARES * 0.1))
 
     def get_number_of_inputs(self):
         number_of_inputs = 0
