@@ -48,7 +48,7 @@ class SimulationSingle:
         self.population = self.create_population_from_genomes(genomes)
         for i, agent in enumerate(self.population):
             self.reset_gen()
-            while agent.timesteps_alive < self.constants.WORLD_SQUARES and len(self.food) > 0 and not agent.out_of_bounds:
+            while len(self.food) > 0 and not agent.out_of_bounds:
             #while agent.energy > 0 and len(self.food) > 0 and not agent.out_of_bounds:
                 # TO QUIT PYGAME
                 for event in pygame.event.get():
@@ -61,8 +61,7 @@ class SimulationSingle:
                 # CHECK IF MOVE GATHERS FOOD
                 if new_pos in self.food:
                     agent.genome.fitness += self.food[new_pos].energy
-                    if agent.energy < self.constants.ALLOWED_MOVES_WITHOUT_PROGRESS:
-                        agent.energy += 2
+                    agent.energy += 2
                     self.food.pop(new_pos)
 
                 if new_pos in self.water:

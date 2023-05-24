@@ -11,8 +11,8 @@ from Classes.simulation_competition import SimulationCompetition
 from Classes.simulation_1v1 import SimulationIvI
 
 
-def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file=""):
-    neat_population, config, stats = get_population_and_config_and_stats(constants, winner_file)
+def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file="", multi_heuristic=False):
+    neat_population, config, stats = get_population_and_config_and_stats(constants, winner_file, multi_heuristic=multi_heuristic)
     if constants.START_TYPE == StartType.Single:
         simulation = SimulationSingle(constants, neat_population, config)
     elif constants.START_TYPE == StartType.Competition:
@@ -33,14 +33,17 @@ def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file=""):
 
 def move_and_delete_files(filename):
     # Move winner Genome
+    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnHalfFoodDirectlyHeuristic"
+
+
     if os.path.exists("winner.pkl"):
         src_path = "winner.pkl"
-        dst_path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFullHalf/winner" + str(filename) + ".pkl"
+        dst_path = path + "/winner" + str(filename) + ".pkl"
         shutil.move(src_path, dst_path)
 
     # Move stats
     src_path = "fitness_history.csv"
-    dst_path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFullHalf/fitness_history" + str(filename) + ".csv"
+    dst_path = path + "/fitness_history" + str(filename) + ".csv"
     shutil.move(src_path, dst_path)
 
     # Remove unnecessary files
@@ -53,28 +56,28 @@ if __name__ == "__main__":
     start_mode = StartMode.Winner
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.HalfWaterHalfFood
+    food_distribution = FoodDistribution.QuarterFull
     draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    #create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Base_Case/fs_neat/topleft_new_config')
+    #create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFullHalf/winner1.pkl')
     #exit(0)
 
-    for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/HalfFull/TrainedOnFullMiddle/winner*.pkl"):
-    #for i in range(8):
+    #for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFullHalf/winner*.pkl"):
+    for i in range(3, 10):
 
-        file_length = len(file) - file.rfind('/')
-        last_char_in_filename = len(file)-1
-        if file_length == 12:
-             counter = file[last_char_in_filename-4]
-        else:
-            counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
+        #file_length = len(file) - file.rfind('/')
+        #last_char_in_filename = len(file)-1
+        #if file_length == 12:
+        #     counter = file[last_char_in_filename-4]
+        #else:
+        #    counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file=file)
+            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/A)HalfFull/Direct', multi_heuristic=True)
         finally:
-            move_and_delete_files(counter)
+            move_and_delete_files(i)
 
 
 

@@ -8,7 +8,7 @@ from configparser import ConfigParser
 from Classes.constants import Constants, StartMode
 
 
-def get_population_and_config_and_stats(constants, file_to_create_pop_from=""):
+def get_population_and_config_and_stats(constants, file_to_create_pop_from="", multi_heuristic=False):
     print(f"Creating and updating config!")
 
     print(f"Finding genome with fitness: " + str(constants.FITNESS_THRESH))
@@ -30,7 +30,7 @@ def get_population_and_config_and_stats(constants, file_to_create_pop_from=""):
     if constants.START_MODE == StartMode.New:
         neat_population = neat.Population(config)
     elif constants.START_MODE == StartMode.Winner:
-        neat_population = create_pop_from_pkl(config, file_to_create_pop_from)
+        neat_population = create_pop_from_pkl(config, file_to_create_pop_from, multi_heuristic=multi_heuristic)
     else:
         neat_population = neat.Checkpointer.restore_checkpoint(file_to_create_pop_from)
         neat_population.config.fitness_threshold = constants.FITNESS_THRESH
@@ -43,10 +43,13 @@ def get_population_and_config_and_stats(constants, file_to_create_pop_from=""):
     return neat_population, config, stats
 
 
-def create_pop_from_pkl(config, pkl_path):
+def create_pop_from_pkl(config, pkl_path, multi_heuristic):
     print(f"Load the last best network!")
     p = neat.Population(config, initial_state=(0, 0, 0))
-    population = create_pop(config, pkl_path)
+    if not multi_heuristic:
+        population = create_pop(config, pkl_path)
+    else:
+        population = create_pop_multiple_genomes(config, pkl_path)
     species = config.species_set_type(config.species_set_config, p.reporters)
     generation = 0
     species.speciate(config, population, generation)
@@ -72,13 +75,13 @@ def create_pop(config, pkl_path):
 
 
 def create_pop_multiple_genomes(config, folder_path):
-    genome_indexer = count(1)
+    genome_indexer = count(10)
     new_genomes = {}
 
     for file in glob.glob(folder_path + '/winner*.pkl'):
         with open(file, "rb") as f:
             genome = pickle.load(f)
-        for i in range(10):
+        for i in range(5):
             key = next(genome_indexer)
             tmp_genome = deepcopy(genome)
             tmp_genome.key = key
