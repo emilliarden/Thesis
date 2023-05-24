@@ -114,6 +114,47 @@ def compare_two_runs(new_folder, pretrained_folder, random_folder, constants, ti
     plt.show()
 
 
+def compare_multiple_runs(direct_folder, base_case, fifty_percent, systematical, random_food, constants, title):
+    direct_frame = create_df_with_mean_and_stddev(direct_folder)
+    base_case_frame = create_df_with_mean_and_stddev(base_case)
+    fifty_percent_frame = create_df_with_mean_and_stddev(fifty_percent)
+    systematical_frame = create_df_with_mean_and_stddev(systematical)
+    random_food_frame = create_df_with_mean_and_stddev(random_food)
+
+
+    data_frames = [direct_frame, base_case_frame, fifty_percent_frame, systematical_frame, random_food_frame]
+    # NEW, PRETRAINED, RANDOM COLORS:
+    colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#f740df', '#f786e8'), ('#47f728', '#97f786'), ('#000000', '#828282')]
+    labels = ['Direct', 'Incremental (Base case)', 'Incremental (50%)', 'Incremental (25% systematical)', 'Incremental (25% random)']
+
+    plt.rcParams["figure.autolayout"] = True
+    plt.rcParams["figure.figsize"] = [15.50, 7.50]
+
+    for i, df in enumerate(data_frames):
+        x = list(range(0, len(df['Mean'])))
+        y = df['Mean']
+        std_dev = df['Standard deviation']
+
+        plt.plot(x, y, color=colors[i][0], label=labels[i])
+        plt.fill_between(x=x,
+                         y1=y - std_dev,
+                         y2=y + std_dev,
+                         alpha=0.3, edgecolor=colors[i][0], facecolor=colors[i][1])
+
+    # ---------------------------------------------------
+    plt.xlabel("Generation", fontsize=18)
+    plt.ylabel("Fitness", fontsize=16)
+    plt.title(title, fontsize=16)
+    plt.axhline(y=constants.FITNESS_THRESH, color='purple', linestyle='--', label='100% fitness')
+    plt.legend(loc="lower right")
+    figure = plt.gcf()  # get current figure
+    figure.set_size_inches(14, 8)
+    plt.savefig("Graphs/" + title + ".svg")
+    plt.savefig("Graphs/" + title + ".png")
+    plt.show()
+
+
+
 def show_all_runs(new_folder, pretrained_folder, random_folder, constants, title):
     new_files = glob.glob(new_folder + "/*.csv")
     pretrained_files = glob.glob(pretrained_folder + "/*.csv")
@@ -176,14 +217,21 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.Unfull_25, None, None)
+    constants = Constants(None, None, FoodDistribution.HalfWaterHalfFood, None, None)
 
-    compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/Direct',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/TrainedOnFullHalf',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Random',
-                     constants, '25%  Distributed All Runs')
-    # create_df_with_mean_and_stddev('/Users/emilknudsen/Desktop/research/Statistics/Full_Arena/fs_neat/topleft')
+    compare_multiple_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Direct',
+                          '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFull',
+                          '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFullHalf',
+                          '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFullHalfQuarter2x',
+                          '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFullHalfQuarterCorners',
+                          constants,
+                          'Test')
 
-    # compare_neat_with_full_fullarena()
+
+    # compare_two_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/Direct',
+    #                 '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/QuarterFull/TrainedOnFullHalf',
+    #                 '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Random',
+    #                  constants, '25%  Distributed All Runs')
+
     # base_case_all_runs()
     # create_genome_graph('/Users/emilknudsen/Desktop/research/winner.pkl', filename="test")
