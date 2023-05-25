@@ -33,7 +33,7 @@ def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file="", mu
 
 def move_and_delete_files(filename):
     # Move winner Genome
-    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnHalfFoodDirectlyHeuristic"
+    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/D)Corners/TrainedOnFull"
 
 
     if os.path.exists("winner.pkl"):
@@ -53,20 +53,20 @@ def move_and_delete_files(filename):
 
 
 if __name__ == "__main__":
-    start_mode = StartMode.Winner
+    start_mode = StartMode.New
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.QuarterFull
+    food_distribution = FoodDistribution.HalfWaterHalfFood
     draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    #create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFullHalf/winner1.pkl')
-    #exit(0)
+    create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='')
+    exit(0)
 
     #for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFullHalf/winner*.pkl"):
-    for i in range(3, 10):
+    for i in range(8,10):
 
         #file_length = len(file) - file.rfind('/')
         #last_char_in_filename = len(file)-1
@@ -75,7 +75,7 @@ if __name__ == "__main__":
         #else:
         #    counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/A)HalfFull/Direct', multi_heuristic=True)
+            create_pop_and_find_winner(constants=constants, rounds_to_run=3000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/Base_Case/fs_neat/middle_new_config', multi_heuristic=True)
         finally:
             move_and_delete_files(i)
 

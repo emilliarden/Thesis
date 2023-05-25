@@ -113,20 +113,21 @@ def compare_two_runs(new_folder, pretrained_folder, constants, title):
     plt.show()
 
 
-def compare_multiple_runs(direct_folder, base_case, fifty_percent, constants, title):
+def compare_multiple_runs(direct_folder, base_case, fifty_percent, twenty_five, constants, title):
     direct_frame = create_df_with_mean_and_stddev(direct_folder)
     base_case_frame = create_df_with_mean_and_stddev(base_case)
     fifty_percent_frame = create_df_with_mean_and_stddev(fifty_percent)
+    twentyfive_percent_frame = create_df_with_mean_and_stddev(twenty_five)
     #systematical_frame = create_df_with_mean_and_stddev(systematical)
     #random_food_frame = create_df_with_mean_and_stddev(random_food)
 
 
-    data_frames = [direct_frame, base_case_frame, fifty_percent_frame]#, systematical_frame, random_food_frame]
-    increment = [0, 351, 351+30]
+    data_frames = [direct_frame, base_case_frame, fifty_percent_frame, twentyfive_percent_frame]#, systematical_frame, random_food_frame]
+    increment = [0, 351, 157, 548]
     max_gens = 3000
     # NEW, PRETRAINED, RANDOM COLORS:
-    colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#f740df', '#f786e8'), ('#47f728', '#97f786'), ('#000000', '#828282')]
-    labels = ['Direct', 'Incremental (Base case)', 'Incremental (Base case + 50%)', 'Incremental (25% systematical)', 'Incremental (25% random)']
+    colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#f740df', '#f786e8'), ('#00e600', '#80ff80'), ('#000000', '#828282')]
+    labels = ['Direct', 'Incremental (Base case)', 'Incremental (50% environment)', 'Incremental (25% environment)', 'Incremental (25% random)']
 
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
@@ -210,7 +211,7 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.QuarterFull, None, None)
+    constants = Constants(None, None, FoodDistribution.Corners, None, None)
 
     # compare_multiple_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Direct',
     #                       '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFull',
@@ -221,10 +222,11 @@ if __name__ == "__main__":
     #                       'Test')
 
 
-    compare_multiple_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/Direct',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFull',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFullHalf',
-                     constants, '25% Systematical')
+    compare_multiple_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/D)Corners/Direct',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/D)Corners/TrainedOnFull',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/D)Corners/TrainedOnHalf',
+                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/D)Corners/TrainedOnQuarter',
+                     constants, 'Corner clusters environment')
 
     # base_case_all_runs()
     # create_genome_graph('/Users/emilknudsen/Desktop/research/winner.pkl', filename="test")
