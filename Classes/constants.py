@@ -53,7 +53,7 @@ class Constants:
     def get_start_pos(self, food_distribution):
         food_distribution_with_start_pos_middle = [FoodDistribution.SpiralWithWater, FoodDistribution.Spiral,
                                                    FoodDistribution.Cross, #FoodDistribution.Corners,
-                                                   FoodDistribution.SpaceBetweenFood, FoodDistribution.CornersWithWater,
+                                                   FoodDistribution.SpaceBetweenFood, #FoodDistribution.CornersWithWater,
                                                    FoodDistribution.SpiralWithWater2, #FoodDistribution.Unfull_25
                                                    #FoodDistribution.Full,
                                                    ]

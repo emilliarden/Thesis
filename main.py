@@ -33,7 +33,7 @@ def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file="", mu
 
 def move_and_delete_files(filename):
     # Move winner Genome
-    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)Cross/TrainedOnCorners"
+    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/B)Cross/TrainedOnCorners"
 
 
     if os.path.exists("winner.pkl"):
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     start_mode = StartMode.Winner
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.Cross
+    food_distribution = FoodDistribution.CornersWithWater
     draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,

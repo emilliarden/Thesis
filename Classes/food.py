@@ -220,23 +220,27 @@ class FoodCreater:
 
     def corners_arena_with_water(self):
         random.seed(42)
-        amount_per_corner = 10
+        amount_per_corner = 6
         water_dict = dict()
         food_dict = dict()
         topleft = [(round(random.randint(0, self.WORLD_WIDTH * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR,
                     round(random.randint(0, self.WORLD_HEIGHT * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for _ in
-                   range(amount_per_corner)]
+                   range(6)]
         topright = [(round(
-            random.randint(self.WORLD_WIDTH * 0.75, self.WORLD_WIDTH) / self.SCALE_FACTOR) * self.SCALE_FACTOR,
+            random.randint(self.WORLD_WIDTH * 0.75,
+                           self.WORLD_WIDTH - self.SCALE_FACTOR) / self.SCALE_FACTOR) * self.SCALE_FACTOR,
                      round(random.randint(0, self.WORLD_HEIGHT * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for _
-                    in range(amount_per_corner)]
+                    in range(6)]
         bottomleft = [(round(random.randint(0, self.WORLD_WIDTH * 0.25) / self.SCALE_FACTOR) * self.SCALE_FACTOR, round(
-            random.randint(self.WORLD_HEIGHT * 0.75, self.WORLD_HEIGHT) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for _
-                      in range(amount_per_corner)]
+            random.randint(self.WORLD_HEIGHT * 0.75,
+                           self.WORLD_HEIGHT - self.SCALE_FACTOR) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for _
+                      in range(6)]
         bottomright = [(round(
-            random.randint(self.WORLD_WIDTH * 0.75, self.WORLD_WIDTH) / self.SCALE_FACTOR) * self.SCALE_FACTOR, round(
-            random.randint(self.WORLD_HEIGHT * 0.75, self.WORLD_HEIGHT) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for _
-                       in range(amount_per_corner)]
+            random.randint(self.WORLD_WIDTH * 0.75,
+                           self.WORLD_WIDTH - self.SCALE_FACTOR) / self.SCALE_FACTOR) * self.SCALE_FACTOR, round(
+            random.randint(self.WORLD_HEIGHT * 0.75,
+                           self.WORLD_HEIGHT - self.SCALE_FACTOR) / self.SCALE_FACTOR) * self.SCALE_FACTOR) for _
+                       in range(6)]
 
         for (x, y) in topleft + topright + bottomleft + bottomright:
             food_dict[(x, y)] = Food(x, y, 1, self.SCALE_FACTOR)
@@ -247,9 +251,10 @@ class FoodCreater:
             surrounding_squares.pop(random.randint(0, len(surrounding_squares) - 1))
             surrounding_squares.pop(random.randint(0, len(surrounding_squares) - 1))
             surrounding_squares.pop(random.randint(0, len(surrounding_squares) - 1))
+            surrounding_squares.pop(random.randint(0, len(surrounding_squares) - 1))
 
             for (sx, sy) in surrounding_squares:
-                if (sx, sy) in food_dict or sx == 640 and sy == 800:
+                if (sx, sy) in food_dict:
                     continue
                 water_dict[(sx, sy)] = 1
 
