@@ -53,7 +53,7 @@ def move_and_delete_files(filename):
 
 
 if __name__ == "__main__":
-    start_mode = StartMode.Winner
+    start_mode = StartMode.New
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
     food_distribution = FoodDistribution.HalfWaterHalfFood
@@ -62,8 +62,8 @@ if __name__ == "__main__":
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    #create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='')
-    #exit(0)
+    create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='')
+    exit(0)
 
     #for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFullHalf/winner*.pkl"):
     for i in range(10):

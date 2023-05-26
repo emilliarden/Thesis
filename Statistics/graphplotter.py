@@ -127,17 +127,17 @@ def compare_multiple_runs(direct_folder, base_case, fifty_percent, twenty_five, 
     max_gens = 3000
     # NEW, PRETRAINED, RANDOM COLORS:
     colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#f740df', '#f786e8'), ('#00e600', '#80ff80'), ('#000000', '#828282')]
-    labels = ['Direct', 'Incremental (Base case)', 'Incremental (50% environment)', 'Incremental (25% environment)', 'Incremental (25% random)']
+    labels = ['Direct', 'Incremental (Base case)', 'Incremental (50% environment)', 'Incremental (25% environment)', 'Incremental (Corner clusters)']
 
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
 
     for i, df in enumerate(data_frames):
         x_from = increment[i]
-        x_to = len(df['Mean']) + increment[i] if increment[i] + len(df['Mean']) <= 3000 else len(df['Mean'])
+        x_to = len(df['Mean']) + increment[i] if increment[i] + len(df['Mean']) <= 4000 else len(df['Mean'])
         x = list(range(x_from, x_to))
-        y = df['Mean'] if increment[i] + len(df['Mean']) <= 3000 else df['Mean'].head(len(df['Mean'])-increment[i])
-        std_dev = df['Standard deviation'] if increment[i] + len(df['Mean']) <= 3000 else df['Standard deviation'].head(len(df['Standard deviation'])-increment[i])
+        y = df['Mean'] if increment[i] + len(df['Mean']) <= 4000 else df['Mean'].head(len(df['Mean'])-increment[i])
+        std_dev = df['Standard deviation'] if increment[i] + len(df['Mean']) <= 4000 else df['Standard deviation'].head(len(df['Standard deviation'])-increment[i])
 
         plt.plot(x, y, color=colors[i][0], label=labels[i])
         plt.fill_between(x=x,
