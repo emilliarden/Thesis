@@ -33,7 +33,7 @@ def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file="", mu
 
 def move_and_delete_files(filename):
     # Move winner Genome
-    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)HalfWaterHalfFood/TrainedOnCorners"
+    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)Cross/TrainedOnCorners"
 
 
     if os.path.exists("winner.pkl"):
@@ -53,17 +53,17 @@ def move_and_delete_files(filename):
 
 
 if __name__ == "__main__":
-    start_mode = StartMode.New
+    start_mode = StartMode.Winner
     start_type = StartType.Single
     sensing_mode = SensingMode.BoxDiff
-    food_distribution = FoodDistribution.HalfWaterHalfFood
+    food_distribution = FoodDistribution.Cross
     draw = False
 
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='')
-    exit(0)
+    #create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/B)Cross/TrainedOnFullDirectlyHeuristic', multi_heuristic=True)
+    #exit(0)
 
     #for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFullHalf/winner*.pkl"):
     for i in range(10):
