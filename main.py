@@ -33,7 +33,7 @@ def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file="", mu
 
 def move_and_delete_files(filename):
     # Move winner Genome
-    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)HalfWaterHalfFood/TrainedOnFull"
+    path = r"/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)HalfWaterHalfFood/TrainedOnCorners"
 
 
     if os.path.exists("winner.pkl"):
@@ -75,7 +75,7 @@ if __name__ == "__main__":
         #else:
         #    counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/A)Base_Case/fs_neat/middle_new_config', multi_heuristic=True)
+            create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='/Users/emilknudsen/Desktop/research/Statistics/Runs/B)Less_Food/D)Corners/TrainedOnQuarter', multi_heuristic=True)
         finally:
             move_and_delete_files(i)
 
