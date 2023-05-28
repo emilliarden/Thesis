@@ -113,31 +113,34 @@ def compare_two_runs(new_folder, pretrained_folder, constants, title):
     plt.show()
 
 
-def compare_multiple_runs(constants, title, direct_folder=None, base_case=None, half=None, quarter=None, corners=None):
+def compare_multiple_runs(constants, title, direct_folder=None, base_case=None, half=None, quarter=None, corners=None, quarterWater=None):
     direct_frame = create_df_with_mean_and_stddev(direct_folder) if direct_folder is not None else []
     base_case_frame = create_df_with_mean_and_stddev(base_case) if base_case is not None else []
     fifty_percent_frame = create_df_with_mean_and_stddev(half) if half is not None else []
     twentyfive_percent_frame = create_df_with_mean_and_stddev(quarter) if quarter is not None else []
     corners_frame = create_df_with_mean_and_stddev(corners) if corners is not None else []
+    quarterWater_frame = create_df_with_mean_and_stddev(quarterWater) if quarterWater is not None else []
     #random_food_frame = create_df_with_mean_and_stddev(random_food)
 
 
-    data_frames = [direct_frame, base_case_frame, fifty_percent_frame, twentyfive_percent_frame, corners_frame]#, systematical_frame, random_food_frame]
-    increment = [0, 351, 157, 548, 827]
+    data_frames = [direct_frame, base_case_frame, fifty_percent_frame, twentyfive_percent_frame, corners_frame, quarterWater_frame]
+    increment = [0, 351, 157, 548, 827, 1109]
     max_gens = 3000
     # NEW, PRETRAINED, RANDOM COLORS:
-    colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#f740df', '#f786e8'), ('#00e600', '#80ff80'), ('#000000', '#828282')]
-    labels = ['Direct', 'Incremental (Base case)', 'Incremental (50% environment)', 'Incremental (25% environment)', 'Incremental (Corner clusters)']
+    colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#f740df', '#f786e8'),
+              ('#00e600', '#80ff80'), ('#000000', '#828282'), ('#ffff00', '#ffff80')]
+    labels = ['Direct', 'Incremental (Base case)', 'Incremental (50% environment)',
+              'Incremental (25% environment)', 'Incremental (Corner clusters)', 'Incremental (25‰ with water)']
 
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
 
     for i, df in enumerate(data_frames):
         x_from = increment[i]
-        x_to = len(df['Mean']) + increment[i] if increment[i] + len(df['Mean']) <= 4000 else len(df['Mean'])
+        x_to = len(df['Mean']) + increment[i] if increment[i] + len(df['Mean']) <= 5000 else len(df['Mean'])
         x = list(range(x_from, x_to))
-        y = df['Mean'] if increment[i] + len(df['Mean']) <= 4000 else df['Mean'].head(len(df['Mean'])-increment[i])
-        std_dev = df['Standard deviation'] if increment[i] + len(df['Mean']) <= 4000 else df['Standard deviation'].head(len(df['Standard deviation'])-increment[i])
+        y = df['Mean'] if increment[i] + len(df['Mean']) <= 5000 else df['Mean'].head(len(df['Mean'])-increment[i])
+        std_dev = df['Standard deviation'] if increment[i] + len(df['Mean']) <= 5000 else df['Standard deviation'].head(len(df['Standard deviation'])-increment[i])
 
         plt.plot(x, y, color=colors[i][0], label=labels[i])
         plt.fill_between(x=x,
@@ -211,7 +214,7 @@ def create_genome_graph(winner_file, filename):
 
 
 if __name__ == "__main__":
-    constants = Constants(None, None, FoodDistribution.HalfWaterHalfFood, None, None)
+    constants = Constants(None, None, FoodDistribution.Cross, None, None)
 
     # compare_multiple_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Direct',
     #                       '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFull',
@@ -222,12 +225,13 @@ if __name__ == "__main__":
     #                       'Test')
 
 
-    compare_multiple_runs(constants, '25% environment with water',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)HalfWaterHalfFood/Direct',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)HalfWaterHalfFood/TrainedOnFull',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)HalfWaterHalfFood/TrainedOnHalf',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)HalfWaterHalfFood/TrainedOnQuarter',
-                    '/Users/emilknudsen/Desktop/research/Statistics/Runs/C)Complex/A)HalfWaterHalfFood/TrainedOnCorners',
+    compare_multiple_runs(constants, 'Cross environment',
+                    '/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/B)Cross/Direct',
+                    '/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/B)Cross/TrainedOnFull',
+                    '/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/B)Cross/TrainedOnHalf',
+                    '/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/B)Cross/TrainedOnQuarter',
+                    '/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/B)Cross/TrainedOnCorners',
+                    '/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/B)Cross/TrainedOnHalfWater'
                     )
 
     # base_case_all_runs()
