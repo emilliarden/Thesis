@@ -130,7 +130,7 @@ def compare_multiple_runs(constants, title, direct_folder=None, base_case=None, 
     colors = [('#CC4F1B', '#FF9848'), ('#1B2ACC', '#089FFF'), ('#f740df', '#f786e8'),
               ('#00e600', '#80ff80'), ('#000000', '#828282'), ('#ffff00', '#ffff80')]
     labels = ['Direct', 'Incremental (Base case)', 'Incremental (50% environment)',
-              'Incremental (25% environment)', 'Incremental (Corner clusters)', 'Incremental (25‰ with water)']
+              'Incremental (25% environment)', 'Incremental (Corner clusters)', 'Incremental (25% with water)']
 
     plt.rcParams["figure.autolayout"] = True
     plt.rcParams["figure.figsize"] = [15.50, 7.50]
@@ -211,10 +211,13 @@ def create_genome_graph(winner_file, filename):
                          '/Users/emilknudsen/Desktop/research/config.txt')
 
     draw_net_without_all_nodes(config, genome, view=True, show_disabled=False, filename=filename)
-
+    print(genome.size())
 
 if __name__ == "__main__":
     constants = Constants(None, None, FoodDistribution.Cross, None, None)
+
+    create_genome_graph('/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/B)Cross/TrainedOnQuarter/winner0.pkl', filename="test")
+    exit(0)
 
     # compare_multiple_runs('/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/Direct',
     #                       '/Users/emilknudsen/Desktop/research/Statistics/Runs/Complex/HalfWaterHalfFood/TrainedOnFull',

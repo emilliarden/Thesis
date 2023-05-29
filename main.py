@@ -33,7 +33,7 @@ def create_pop_and_find_winner(constants, rounds_to_run=None, winner_file="", mu
 
 def move_and_delete_files(filename):
     # Move winner Genome
-    path = r"/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/D)CornersWithWater/TrainedOnQuarter"
+    path = r"/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/D)CornersWithWater/TrainedOnFull"
 
 
     if os.path.exists("winner.pkl"):
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     constants = Constants(draw=draw, sensing_mode=sensing_mode, start_mode=start_mode,
                           food_distribution=food_distribution, start_type=start_type)
 
-    #create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/B)Less_Food/B)Systematic_QuarterFull/TrainedOnFullDirectlyHeuristic', multi_heuristic=True)
+    #create_pop_and_find_winner(constants=constants, rounds_to_run=4000, winner_file='/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/C)Complex/D)CornersWithWater/TrainedOnQuarter/winner6.pkl', multi_heuristic=False)
     #exit(0)
 
     #for file in glob.glob("/Users/emilknudsen/Desktop/research/Statistics/Runs/Less_Food/B)Systematic_QuarterFull/TrainedOnFullHalf/winner*.pkl"):
@@ -75,7 +75,7 @@ if __name__ == "__main__":
         #else:
         #    counter = file[last_char_in_filename-5] + file[last_char_in_filename-4]
         try:
-            create_pop_and_find_winner(constants=constants, rounds_to_run=10000, winner_file='/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/B)Less_Food/B)Systematic_QuarterFull/TrainedOnFullDirectlyHeuristic', multi_heuristic=True)
+            create_pop_and_find_winner(constants=constants, rounds_to_run=10000, winner_file='/Users/emilknudsen/Desktop/Thesis/Statistics/Runs/A)Base_Case/fs_neat/middle_new_config', multi_heuristic=True)
         finally:
             move_and_delete_files(i)
 
