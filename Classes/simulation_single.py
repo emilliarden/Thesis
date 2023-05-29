@@ -61,7 +61,7 @@ class SimulationSingle:
                 # CHECK IF MOVE GATHERS FOOD
                 if new_pos in self.food:
                     agent.genome.fitness += self.food[new_pos].energy
-                    agent.energy += 4
+                    agent.energy += 10
                     self.food.pop(new_pos)
 
                 if new_pos in self.water:
