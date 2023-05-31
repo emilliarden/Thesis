@@ -81,7 +81,7 @@ def create_pop_multiple_genomes(config, folder_path):
     for file in glob.glob(folder_path + '/winner*.pkl'):
         with open(file, "rb") as f:
             genome = pickle.load(f)
-        for i in range(1):
+        for i in range(10):
             key = next(genome_indexer)
             tmp_genome = deepcopy(genome)
             tmp_genome.key = key
